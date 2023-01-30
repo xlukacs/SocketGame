@@ -43,7 +43,12 @@
             spinner-size="82px"
             height="150px"
           />
-          <q-btn color="primary" label="START" @click="onClick" />
+          <q-btn
+            color="primary"
+            label="START"
+            href="http://localhost:8080/#/gameClient"
+            target="_blank"
+          />
         </div>
         <div class="rightPart">
           <q-btn color="primary" label="Shop" @click="onClick" />

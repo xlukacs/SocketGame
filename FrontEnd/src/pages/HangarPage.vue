@@ -106,7 +106,7 @@
                   <span class="propertyValue">200 000</span>
                 </li>
               </ul>
-              <q-separators color="primary"></q-separators>
+              <q-separator color="primary"></q-separator>
               <h6>Abilites</h6>
               <div class="ability">
                 <q-img
@@ -125,7 +125,7 @@
 
           <q-tab-panel name="drones">
             <q-scroll-area
-              class="bg-dark text-white rounded-borders"
+              class="bg-dark text-white rounded-borders drones"
               style="height: 350px"
             >
               <ul class="drone">
@@ -142,6 +142,7 @@
                   <span class="propertyValue">200 000 / 105 000</span>
                 </li>
               </ul>
+              <q-separator color="primary"></q-separator>
               <ul class="drone">
                 <li>
                   <span class="propertyName">nth/Name</span>
@@ -156,10 +157,39 @@
                   <span class="propertyValue">200 000 / 105 000</span>
                 </li>
               </ul>
+              <q-separator color="primary"></q-separator>
               <ul class="drone">
                 <li>
                   <span class="propertyName">nth/Name</span>
                   <span class="propertyValue">3.Iris</span>
+                </li>
+                <li>
+                  <span class="propertyName">Level</span>
+                  <span class="propertyValue">level 6</span>
+                </li>
+                <li>
+                  <span class="propertyName">XP</span>
+                  <span class="propertyValue">200 000 / 105 000</span>
+                </li>
+              </ul>
+              <ul class="drone">
+                <li>
+                  <span class="propertyName">nth/Name</span>
+                  <span class="propertyValue">4.Iris</span>
+                </li>
+                <li>
+                  <span class="propertyName">Level</span>
+                  <span class="propertyValue">level 6</span>
+                </li>
+                <li>
+                  <span class="propertyName">XP</span>
+                  <span class="propertyValue">200 000 / 105 000</span>
+                </li>
+              </ul>
+              <ul class="drone">
+                <li>
+                  <span class="propertyName">nth/Name</span>
+                  <span class="propertyValue">5.Iris</span>
                 </li>
                 <li>
                   <span class="propertyName">Level</span>
@@ -178,7 +208,7 @@
               class="bg-dark text-white rounded-borders"
               style="height: 350px"
             >
-              <div class="text-h6">Movies</div>
+              <div class="text-h6">PET TAB</div>
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
             </q-scroll-area>
           </q-tab-panel>
@@ -309,6 +339,33 @@ section {
         font-size: 1.3em;
         margin-top: 0px;
         margin-bottom: 0px;
+      }
+    }
+  }
+  .drones {
+    .drone {
+      list-style-type: none;
+      padding-left: 0px;
+      li {
+        padding: 4px 2px;
+        display: flex;
+        flex-direction: row;
+        .propertyName,
+        .propertyValue {
+          width: 50%;
+          display: block;
+        }
+        .propertyValue {
+          text-align: right;
+          padding-right: 20px;
+        }
+      }
+      li:nth-child(odd) {
+        background-color: lightgray;
+        color: black;
+      }
+      li:nth-child(even) {
+        background-color: gray;
       }
     }
   }
