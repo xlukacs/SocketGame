@@ -5,6 +5,15 @@
         <div class="serverInfo">
           <div class="server">GE1</div>
           <div class="sid">lvl 22</div>
+          <div class="buttons">
+            <q-btn
+              color="primary"
+              dense
+              icon="home"
+              @click="$router.push('/')"
+            />
+            <q-btn color="primary" dense icon="check" @click="onClick" />
+          </div>
         </div>
         <div class="accountInfo">
           <div class="xp">1.500 k</div>
@@ -18,7 +27,11 @@
       </div>
       <div class="mid">
         <div class="leftPart">
-          <q-btn color="primary" label="Hangar" @click="onClick" />
+          <q-btn
+            color="primary"
+            label="Hangar"
+            @click="$router.push('/hangar')"
+          />
           <q-btn color="primary" label="Profile" @click="onClick" />
           <q-btn color="primary" label="Skylab" @click="onClick" />
         </div>
@@ -85,6 +98,14 @@ export default defineComponent({
   .serverInfo {
     padding-left: 50px;
     gap: 10%;
+    .buttons {
+      position: relative;
+      top: 25px;
+      left: -200px;
+      button {
+        margin-right: 10px;
+      }
+    }
   }
   .accountInfo {
     flex-flow: row-reverse;
@@ -122,6 +143,8 @@ export default defineComponent({
 
   .leftPart {
     padding-top: 50px;
+    display: flex;
+    flex-direction: column;
     button:nth-child(1) {
       margin-left: 100px;
     }
@@ -141,9 +164,9 @@ export default defineComponent({
 
   .rightPart {
     padding-top: 50px;
-    button {
-      float: right;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     button:nth-child(1) {
       margin-right: 100px;
     }
@@ -159,8 +182,8 @@ export default defineComponent({
 }
 .bot {
   width: 100%;
-  height: 35px;
-  line-height: 35px;
+  height: 25px;
+  line-height: 25px;
   .accountCurrencies {
     width: 300px;
     float: right;

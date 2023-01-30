@@ -229,6 +229,7 @@ section {
         background-color: rgb(37, 52, 252);
         span {
           font-weight: bold !important;
+          color: white;
         }
       }
     }

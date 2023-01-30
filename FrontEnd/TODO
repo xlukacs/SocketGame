@@ -1,2 +1,7 @@
 UI:
-  - Create notice/update/event widget in the main screen
+
+- Create notice/update/event widget in the main screen
+
+FIX UI:
+
+- fix scrollarea bottem left and right rounded corners (button section below looks separated)
