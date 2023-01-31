@@ -24,7 +24,9 @@ export default defineComponent({
     return {};
   },
   data() {
-    return {};
+    return {
+      playerName: "bence",
+    };
   },
   methods: {
     movePlayer(ev) {
@@ -40,7 +42,7 @@ export default defineComponent({
       moveByX /= -10;
       moveByY /= -10;
 
-      var object = scene.getObjectByName("rubberDucky", true);
+      var object = scene.getObjectByName(this.playerName, true);
       object.position.set(
         object.position.x + moveByX,
         0,
@@ -53,7 +55,20 @@ export default defineComponent({
         camera.position.z + moveByY
       );
     },
+    handleKey(key) {
+      var object = scene.getObjectByName(this.playerName, true);
+      if (key.key == "q") {
+        object.rotation.y += 0.1;
+      }
+      if (key.key == "e") {
+        object.rotation.y -= 0.1;
+      }
+    },
     init() {
+      window.addEventListener("keypress", (e) => {
+        this.handleKey(e);
+      });
+
       //scene
       scene = new THREE.Scene();
 
@@ -64,7 +79,7 @@ export default defineComponent({
         0.1,
         1000
       );
-      camera.position.set(0, 25, 10);
+      camera.position.set(0, 40, 15);
 
       //render pipeline
       renderer = new THREE.WebGLRenderer();
@@ -96,8 +111,11 @@ export default defineComponent({
       "rubberDucky"
     );
 
-    //test duck
+    //test grass
     loadObject(scene, camera, "cube.obj", "grass.bmp", "ground");
+
+    //test Bence
+    loadObject(scene, camera, "benceBouncer.obj", "benceBouncer.bmp", "bence");
 
     //access the objects in the scene
     setTimeout(() => {
@@ -109,6 +127,10 @@ export default defineComponent({
       object = scene.getObjectByName("ground", true);
       object.position.set(0, 0, 0);
       object.scale.set(100, 1, 100);
+
+      object = scene.getObjectByName(this.playerName, true);
+      object.position.set(0, 0, 0);
+      object.scale.set(10, 10, 10);
     }, 1000);
 
     // render loop
