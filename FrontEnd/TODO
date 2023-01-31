@@ -4,4 +4,8 @@ UI:
 
 FIX UI:
 
-- fix scrollarea bottem left and right rounded corners (button section below looks separated)
+- Fix scrollarea bottem left and right rounded corners (button section below looks separated)
+
+LOGIC:
+
+- In the game fix the dumb way of waiting with setInterval to be able to acces the objects in the scene
