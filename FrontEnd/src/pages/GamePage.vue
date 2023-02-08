@@ -31,6 +31,10 @@ export default defineComponent({
   data() {
     return {
       playerName: "bence",
+      playerPos: {
+        x: 0,
+        y: 0,
+      },
     };
   },
   methods: {
@@ -55,6 +59,9 @@ export default defineComponent({
       moveByX /= -10;
       moveByY /= -10;
 
+      this.playerPos.x += moveByX;
+      this.playerPos.y += moveByY;
+
       var object = scene.getObjectByName(this.playerName, true);
       object.position.set(
         object.position.x + moveByX,
@@ -67,6 +74,32 @@ export default defineComponent({
         camera.position.y,
         camera.position.z + moveByY
       );
+
+      let objectFound = false;
+      for (let i = 0; i < scene.children.length; i++) {
+        if (scene.children[i].name === "tempClickPoint") {
+          objectFound = true;
+          break;
+        }
+      }
+      if (objectFound) {
+        object = scene.getObjectByName("tempClickPoint", true);
+        object.position.set(this.playerPos.x, 2, this.playerPos.y);
+        console.log(
+          "CLICKPOINT MOVED TO: " + this.playerPos.x + "/" + this.playerPos.y
+        );
+      } else {
+        object = scene.getObjectByName("originalRubberDucky", true);
+        let clickPoint = object.clone();
+        clickPoint.name = "tempClickPoint";
+        clickPoint.position.set(this.playerPos.x, 2, this.playerPos.y);
+        clickPoint.scale.set(1, 1, 1);
+        console.log(
+          "CLICKPOINT ADDED TO: " + this.playerPos.x + "/" + this.playerPos.y
+        );
+
+        scene.add(clickPoint);
+      }
     },
     handleKey(key) {
       var object = scene.getObjectByName(this.playerName, true);
@@ -92,7 +125,7 @@ export default defineComponent({
         0.1,
         1000
       );
-      camera.position.set(0, 40, 15);
+      camera.position.set(0, 70, 15);
 
       //render pipeline
       renderer = new THREE.WebGLRenderer();
@@ -134,16 +167,16 @@ export default defineComponent({
       camera,
       "rubberDuck.obj",
       "rubberDuck.bmp",
-      "rubberDucky"
+      "originalRubberDucky"
     );
     console.log("Done with rubberDuck");
 
     //access the objects in the scene
     setTimeout(() => {
       document.getElementsByClassName("errorMessage")[0].style.display = "none";
-      var object = scene.getObjectByName("rubberDucky", true);
+      var object = scene.getObjectByName("originalRubberDucky", true);
       object.position.set(0, 0, 0);
-      object.scale.set(1, 1, 1);
+      object.scale.set(0, 0, 0);
       object.rotation.x -= Math.PI / 2;
 
       object = scene.getObjectByName("ground", true);
@@ -153,7 +186,83 @@ export default defineComponent({
       object = scene.getObjectByName(this.playerName, true);
       object.position.set(0, 0, 0);
       object.scale.set(10, 10, 10);
-    }, 1000);
+
+      //spawn drones
+      object = scene.getObjectByName("originalRubberDucky", true);
+      let drone1 = object.clone();
+      let drone2 = object.clone();
+      let drone3 = object.clone();
+      let drone4 = object.clone();
+      let drone5 = object.clone();
+      let drone6 = object.clone();
+      let drone7 = object.clone();
+      let drone8 = object.clone();
+      let drone9 = object.clone();
+      let drone10 = object.clone();
+
+      //drones
+      //left
+      drone1.name = "drone1";
+      drone1.position.x -= 2;
+      drone1.position.z -= 1;
+      drone1.scale.set(0.1, 0.1, 0.1);
+
+      drone2.name = "drone2";
+      drone2.position.x -= 2.5;
+      drone2.scale.set(0.1, 0.1, 0.1);
+
+      drone3.name = "drone3";
+      drone3.position.x -= 2;
+      drone3.position.z += 1;
+      drone3.scale.set(0.1, 0.1, 0.1);
+
+      //back
+      drone4.name = "drone4";
+      drone4.position.x -= 1;
+      drone4.position.z -= 3;
+      drone4.scale.set(0.1, 0.1, 0.1);
+
+      drone5.name = "drone5";
+      drone5.position.z -= 3.5;
+      drone5.scale.set(0.1, 0.1, 0.1);
+
+      drone6.name = "drone6";
+      drone6.position.x += 1;
+      drone6.position.z -= 3;
+      drone6.scale.set(0.1, 0.1, 0.1);
+
+      drone7.name = "drone7";
+      drone7.position.z -= 2;
+      drone7.scale.set(0.1, 0.1, 0.1);
+
+      //right
+      drone8.name = "drone8";
+      drone8.position.x += 2;
+      drone8.position.z += 1;
+      drone8.scale.set(0.1, 0.1, 0.1);
+
+      drone9.name = "drone9";
+      drone9.position.x += 2.5;
+      drone9.scale.set(0.1, 0.1, 0.1);
+
+      drone10.name = "drone10";
+      drone10.position.x += 2;
+      drone10.position.z -= 1;
+      drone10.scale.set(0.1, 0.1, 0.1);
+
+      //add to player
+      object = scene.getObjectByName(this.playerName, true);
+      object.add(drone1);
+      object.add(drone2);
+      object.add(drone3);
+      object.add(drone4);
+      object.add(drone5);
+      object.add(drone6);
+      object.add(drone7);
+      object.add(drone8);
+      object.add(drone9);
+      object.add(drone10);
+    }, 100);
 
     // render loop
     const animate = () => {

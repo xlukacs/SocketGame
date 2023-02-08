@@ -14,9 +14,23 @@ export async function loadObject(scene, camera, objName, textureName, id) {
         const texture = textureLoader.load(
           "assets/models/" + textureName,
           () => {
+            // if (id == "ground") {
+            //   texture.wrapS = THREE.RepeatWrapping;
+            //   texture.wrapT = THREE.RepeatWrapping;
+
+            //   const material = new THREE.MeshBasicMaterial({
+            //     map: texture,
+            //   });
+            // } else {
+            //   const material = new MeshLambertMaterial({
+            //     map: texture,
+            //   });
+            // }
+
             const material = new MeshLambertMaterial({
               map: texture,
             });
+
             object.traverse((child) => {
               if (child instanceof Mesh) child.material = material;
             });
