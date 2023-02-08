@@ -1,5 +1,10 @@
 <template>
   <div id="gameArea" v-on:click="movePlayer"></div>
+  <div class="errorMessage">Please wait...</div>
+  <div class="controlsMobile">
+    <q-btn color="primary" label="<=" @click="turnLeft" />
+    <q-btn color="primary" label="=>" @click="turnRight" />
+  </div>
 </template>
 
 <script>
@@ -29,6 +34,14 @@ export default defineComponent({
     };
   },
   methods: {
+    turnLeft() {
+      var object = scene.getObjectByName(this.playerName, true);
+      object.rotation.y += 0.1;
+    },
+    turnRight() {
+      var object = scene.getObjectByName(this.playerName, true);
+      object.rotation.y -= 0.1;
+    },
     movePlayer(ev) {
       console.log(ev.clientX);
       console.log(ev.clientY);
@@ -93,7 +106,7 @@ export default defineComponent({
       scene.add(light);
     },
   },
-  mounted() {
+  async mounted() {
     this.init();
 
     //testCube
@@ -101,24 +114,33 @@ export default defineComponent({
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
+    //test Bence
+    await loadObject(
+      scene,
+      camera,
+      "benceBouncer.obj",
+      "benceBouncer.bmp",
+      "bence"
+    );
+    console.log("Done with Bence");
+
+    //test grass
+    await loadObject(scene, camera, "cube.obj", "grass.bmp", "ground");
+    console.log("Done with grass");
 
     //test duck
-    loadObject(
+    await loadObject(
       scene,
       camera,
       "rubberDuck.obj",
       "rubberDuck.bmp",
       "rubberDucky"
     );
-
-    //test grass
-    loadObject(scene, camera, "cube.obj", "grass.bmp", "ground");
-
-    //test Bence
-    loadObject(scene, camera, "benceBouncer.obj", "benceBouncer.bmp", "bence");
+    console.log("Done with rubberDuck");
 
     //access the objects in the scene
     setTimeout(() => {
+      document.getElementsByClassName("errorMessage")[0].style.display = "none";
       var object = scene.getObjectByName("rubberDucky", true);
       object.position.set(0, 0, 0);
       object.scale.set(1, 1, 1);
@@ -144,3 +166,23 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.errorMessage {
+  position: fixed;
+  top: 0;
+  left: 0px;
+  font-weight: bold;
+  font-size: 5em;
+  color: black;
+  z-index: 1001;
+}
+.controlsMobile {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  button {
+    margin: 10px;
+  }
+}
+</style>

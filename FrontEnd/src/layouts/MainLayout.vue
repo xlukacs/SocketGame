@@ -43,11 +43,11 @@
             spinner-size="82px"
             height="150px"
           />
+          <!-- target="_blank"  href="/gameClient" -->
           <q-btn
             color="primary"
             label="START"
-            href="http://localhost:8080/#/gameClient"
-            target="_blank"
+            @click="$router.push('/gameClient')"
           />
         </div>
         <div class="rightPart">
