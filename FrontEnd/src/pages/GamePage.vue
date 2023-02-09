@@ -59,21 +59,23 @@ export default defineComponent({
       moveByX /= -10;
       moveByY /= -10;
 
-      this.playerPos.x += moveByX;
-      this.playerPos.y += moveByY;
+      var moveToPosX = this.playerPos.x + moveByX;
+      var moveToPosY = this.playerPos.y + moveByY;
+      //this.playerPos.x += moveByX;
+      //this.playerPos.y += moveByY;
 
       var object = scene.getObjectByName(this.playerName, true);
-      object.position.set(
-        object.position.x + moveByX,
-        0,
-        object.position.z + moveByY
-      );
+      // object.position.set(
+      //   object.position.x + moveByX,
+      //   0,
+      //   object.position.z + moveByY
+      // );
 
-      camera.position.set(
-        camera.position.x + moveByX,
-        camera.position.y,
-        camera.position.z + moveByY
-      );
+      // camera.position.set(
+      //   camera.position.x + moveByX,
+      //   camera.position.y,
+      //   camera.position.z + moveByY
+      // );
 
       let objectFound = false;
       for (let i = 0; i < scene.children.length; i++) {
@@ -84,21 +86,42 @@ export default defineComponent({
       }
       if (objectFound) {
         object = scene.getObjectByName("tempClickPoint", true);
-        object.position.set(this.playerPos.x, 2, this.playerPos.y);
-        console.log(
-          "CLICKPOINT MOVED TO: " + this.playerPos.x + "/" + this.playerPos.y
-        );
+        object.position.set(moveToPosX, 2, moveToPosY);
+        console.log("CLICKPOINT MOVED TO: " + moveToPosX + "/" + moveToPosY);
+
+        object = scene.getObjectByName("pathToClick", true);
+        scene.remove(object);
+
+        var points = [];
+        points.push(new THREE.Vector3(0, 0, 0));
+        points.push(new THREE.Vector3(moveToPosX, 2, moveToPosY));
+
+        var geometry = new THREE.BufferGeometry().setFromPoints(points);
+        var material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        var line = new THREE.Line(geometry, material);
+        line.name = "pathToClick";
+
+        scene.add(line);
       } else {
         object = scene.getObjectByName("originalRubberDucky", true);
         let clickPoint = object.clone();
         clickPoint.name = "tempClickPoint";
-        clickPoint.position.set(this.playerPos.x, 2, this.playerPos.y);
+        clickPoint.position.set(moveToPosX, 2, moveToPosY);
         clickPoint.scale.set(1, 1, 1);
-        console.log(
-          "CLICKPOINT ADDED TO: " + this.playerPos.x + "/" + this.playerPos.y
-        );
+        console.log("CLICKPOINT ADDED TO: " + moveToPosX + "/" + moveToPosY);
 
         scene.add(clickPoint);
+
+        var points = [];
+        points.push(new THREE.Vector3(0, 0, 0));
+        points.push(new THREE.Vector3(moveToPosX, 2, moveToPosY));
+
+        var geometry = new THREE.BufferGeometry().setFromPoints(points);
+        var material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        var line = new THREE.Line(geometry, material);
+        line.name = "pathToClick";
+
+        scene.add(line);
       }
     },
     handleKey(key) {
