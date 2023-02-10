@@ -1,5 +1,5 @@
 <template>
-  <div id="gameArea" v-on:mousedown="movePlayer"></div>
+  <div id="gameArea" v-on:click="movePlayer"></div>
   <div class="errorMessage">Please wait...</div>
   <div class="controlsMobile">
     <q-btn color="primary" label="<=" @click="turnLeft" />
@@ -43,62 +43,66 @@ export default defineComponent({
       var endPoint = new THREE.Vector3(to.x, to.z, to.y);
       var distance = begPoint.distanceTo(endPoint);
 
-      var steps = Math.floor(distance / 10);
-      var time = steps * 100;
+      var steps = Math.ceil(distance / 1);
+      var time = 30;
 
       console.log("From", from, "\nTO", to);
 
-      let xStepAmount = 0,
-        yStepAmount = 0;
+      if (steps > 0) {
+        let xStepAmount = 0,
+          yStepAmount = 0;
 
-      if (from.x < to.x) {
-        xStepAmount = (to.x - from.x) / steps;
-      } else {
-        xStepAmount = (from.x - to.x) / steps;
-        xStepAmount *= -1;
-      }
-
-      if (from.y < to.y) {
-        yStepAmount = (to.y - from.y) / steps;
-      } else {
-        yStepAmount = (from.y - to.y) / steps;
-        yStepAmount *= -1;
-      }
-      console.log("X+ ", xStepAmount, "\nY+", yStepAmount);
-
-      const animFrame = window.setInterval(() => {
-        this.playerPos.x += xStepAmount;
-        this.playerPos.y += yStepAmount;
-
-        var object = scene.getObjectByName(this.playerName, true);
-        object.position.set(this.playerPos.x, 0, this.playerPos.y);
-
-        camera.position.set(
-          this.playerPos.x,
-          camera.position.y,
-          this.playerPos.y
-        );
-
-        object = scene.getObjectByName("pathToClick", true);
-        object.geometry.dispose();
-        var points = [];
-        points.push(new THREE.Vector3(this.playerPos.x, 2, this.playerPos.y));
-        points.push(new THREE.Vector3(to.x, 2, to.y));
-
-        var updatedGeometry = new THREE.BufferGeometry().setFromPoints(points);
-        object.geometry = updatedGeometry;
-
-        steps--;
-        if (steps <= 0) {
-          window.clearInterval(animFrame);
-
-          console.log("DONE MOVING", this.playerPos);
-          object = scene.getObjectByName("pathToClick", true);
-          scene.remove(object);
-          object = scene.getObjectByName("tempClickPoint", true);
-          scene.remove(object);
+        if (from.x < to.x) {
+          xStepAmount = (to.x - from.x) / steps;
+        } else {
+          xStepAmount = (from.x - to.x) / steps;
+          xStepAmount *= -1;
         }
-      }, time);
+
+        if (from.y < to.y) {
+          yStepAmount = (to.y - from.y) / steps;
+        } else {
+          yStepAmount = (from.y - to.y) / steps;
+          yStepAmount *= -1;
+        }
+        console.log("X+ ", xStepAmount, "\nY+", yStepAmount);
+
+        const animFrame = window.setInterval(() => {
+          this.playerPos.x += xStepAmount;
+          this.playerPos.y += yStepAmount;
+
+          var object = scene.getObjectByName(this.playerName, true);
+          object.position.set(this.playerPos.x, 0, this.playerPos.y);
+
+          camera.position.set(
+            this.playerPos.x,
+            camera.position.y,
+            this.playerPos.y
+          );
+
+          object = scene.getObjectByName("pathToClick", true);
+          object.geometry.dispose();
+          var points = [];
+          points.push(new THREE.Vector3(this.playerPos.x, 2, this.playerPos.y));
+          points.push(new THREE.Vector3(to.x, 2, to.y));
+
+          var updatedGeometry = new THREE.BufferGeometry().setFromPoints(
+            points
+          );
+          object.geometry = updatedGeometry;
+
+          steps--;
+          if (steps <= 0) {
+            window.clearInterval(animFrame);
+
+            console.log("DONE MOVING", this.playerPos);
+            object = scene.getObjectByName("pathToClick", true);
+            scene.remove(object);
+            object = scene.getObjectByName("tempClickPoint", true);
+            scene.remove(object);
+          }
+        }, time);
+      }
     },
     turnLeft() {
       var object = scene.getObjectByName(this.playerName, true);
