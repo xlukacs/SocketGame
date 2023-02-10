@@ -190,6 +190,11 @@ export default defineComponent({
         scene.add(line);
       }
 
+      //rotate player towards the clicked position
+      object = scene.getObjectByName(this.playerName, true);
+      object.lookAt(moveToPosX, 0, moveToPosY);
+
+      //move player
       this.animateMovement(
         { x: this.playerPos.x, z: 0, y: this.playerPos.y },
         { x: moveToPosX, z: 0, y: moveToPosY }
@@ -288,7 +293,7 @@ export default defineComponent({
       object.scale.set(10, 10, 10);
 
       setupDrones(scene, this.playerName);
-    }, 100);
+    }, 1000);
 
     // render loop
     const animate = () => {
