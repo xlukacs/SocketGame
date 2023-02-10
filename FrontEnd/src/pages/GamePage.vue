@@ -9,17 +9,17 @@
 
 <script>
 import * as THREE from "three";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
-
-import { TextureLoader } from "three/src/loaders/TextureLoader";
-import { MeshLambertMaterial } from "three/src/materials/MeshLambertMaterial";
-import { Mesh } from "three";
 
 import { DirectionalLight } from "three";
 
 import { defineComponent } from "vue";
 
 import { loadObject } from "assets/scripts/util";
+import {
+  setupDrones,
+  defaultFormation,
+  turtleFormation,
+} from "assets/scripts/drones";
 
 let scene, camera, renderer;
 
@@ -199,6 +199,12 @@ export default defineComponent({
       if (key.key == "e") {
         object.rotation.y -= 0.1;
       }
+      if (key.code == "Digit1") {
+        defaultFormation(scene);
+      }
+      if (key.code == "Digit2") {
+        turtleFormation(scene);
+      }
     },
     init() {
       window.addEventListener("keypress", (e) => {
@@ -277,81 +283,7 @@ export default defineComponent({
       object.position.set(0, 0, 0);
       object.scale.set(10, 10, 10);
 
-      //spawn drones
-      object = scene.getObjectByName("originalRubberDucky", true);
-      let drone1 = object.clone();
-      let drone2 = object.clone();
-      let drone3 = object.clone();
-      let drone4 = object.clone();
-      let drone5 = object.clone();
-      let drone6 = object.clone();
-      let drone7 = object.clone();
-      let drone8 = object.clone();
-      let drone9 = object.clone();
-      let drone10 = object.clone();
-
-      //drones
-      //left
-      drone1.name = "drone1";
-      drone1.position.x -= 2;
-      drone1.position.z -= 1;
-      drone1.scale.set(0.1, 0.1, 0.1);
-
-      drone2.name = "drone2";
-      drone2.position.x -= 2.5;
-      drone2.scale.set(0.1, 0.1, 0.1);
-
-      drone3.name = "drone3";
-      drone3.position.x -= 2;
-      drone3.position.z += 1;
-      drone3.scale.set(0.1, 0.1, 0.1);
-
-      //back
-      drone4.name = "drone4";
-      drone4.position.x -= 1;
-      drone4.position.z -= 3;
-      drone4.scale.set(0.1, 0.1, 0.1);
-
-      drone5.name = "drone5";
-      drone5.position.z -= 3.5;
-      drone5.scale.set(0.1, 0.1, 0.1);
-
-      drone6.name = "drone6";
-      drone6.position.x += 1;
-      drone6.position.z -= 3;
-      drone6.scale.set(0.1, 0.1, 0.1);
-
-      drone7.name = "drone7";
-      drone7.position.z -= 2;
-      drone7.scale.set(0.1, 0.1, 0.1);
-
-      //right
-      drone8.name = "drone8";
-      drone8.position.x += 2;
-      drone8.position.z += 1;
-      drone8.scale.set(0.1, 0.1, 0.1);
-
-      drone9.name = "drone9";
-      drone9.position.x += 2.5;
-      drone9.scale.set(0.1, 0.1, 0.1);
-
-      drone10.name = "drone10";
-      drone10.position.x += 2;
-      drone10.position.z -= 1;
-      drone10.scale.set(0.1, 0.1, 0.1);
-
-      //add to player
-      object = scene.getObjectByName(this.playerName, true);
-      object.add(drone1);
-      object.add(drone2);
-      object.add(drone3);
-      object.add(drone4);
-      object.add(drone5);
-      object.add(drone6);
-      object.add(drone7);
-      object.add(drone8);
-      object.add(drone9);
-      object.add(drone10);
+      setupDrones(scene, this.playerName);
     }, 100);
 
     // render loop
