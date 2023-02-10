@@ -1,5 +1,5 @@
 <template>
-  <div id="gameArea" v-on:click="movePlayer"></div>
+  <div id="gameArea" v-on:mousedown="movePlayer"></div>
   <div class="errorMessage">Please wait...</div>
   <div class="controlsMobile">
     <q-btn color="primary" label="<=" @click="turnLeft" />
@@ -38,6 +38,68 @@ export default defineComponent({
     };
   },
   methods: {
+    async animateMovement(from, to) {
+      var begPoint = new THREE.Vector3(from.x, from.z, from.y);
+      var endPoint = new THREE.Vector3(to.x, to.z, to.y);
+      var distance = begPoint.distanceTo(endPoint);
+
+      var steps = Math.floor(distance / 10);
+      var time = steps * 100;
+
+      console.log("From", from, "\nTO", to);
+
+      let xStepAmount = 0,
+        yStepAmount = 0;
+
+      if (from.x < to.x) {
+        xStepAmount = (to.x - from.x) / steps;
+      } else {
+        xStepAmount = (from.x - to.x) / steps;
+        xStepAmount *= -1;
+      }
+
+      if (from.y < to.y) {
+        yStepAmount = (to.y - from.y) / steps;
+      } else {
+        yStepAmount = (from.y - to.y) / steps;
+        yStepAmount *= -1;
+      }
+      console.log("X+ ", xStepAmount, "\nY+", yStepAmount);
+
+      const animFrame = window.setInterval(() => {
+        this.playerPos.x += xStepAmount;
+        this.playerPos.y += yStepAmount;
+
+        var object = scene.getObjectByName(this.playerName, true);
+        object.position.set(this.playerPos.x, 0, this.playerPos.y);
+
+        camera.position.set(
+          this.playerPos.x,
+          camera.position.y,
+          this.playerPos.y
+        );
+
+        object = scene.getObjectByName("pathToClick", true);
+        object.geometry.dispose();
+        var points = [];
+        points.push(new THREE.Vector3(this.playerPos.x, 2, this.playerPos.y));
+        points.push(new THREE.Vector3(to.x, 2, to.y));
+
+        var updatedGeometry = new THREE.BufferGeometry().setFromPoints(points);
+        object.geometry = updatedGeometry;
+
+        steps--;
+        if (steps <= 0) {
+          window.clearInterval(animFrame);
+
+          console.log("DONE MOVING", this.playerPos);
+          object = scene.getObjectByName("pathToClick", true);
+          scene.remove(object);
+          object = scene.getObjectByName("tempClickPoint", true);
+          scene.remove(object);
+        }
+      }, time);
+    },
     turnLeft() {
       var object = scene.getObjectByName(this.playerName, true);
       object.rotation.y += 0.1;
@@ -93,7 +155,7 @@ export default defineComponent({
         scene.remove(object);
 
         var points = [];
-        points.push(new THREE.Vector3(0, 0, 0));
+        points.push(new THREE.Vector3(this.playerPos.x, 2, this.playerPos.y));
         points.push(new THREE.Vector3(moveToPosX, 2, moveToPosY));
 
         var geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -113,7 +175,7 @@ export default defineComponent({
         scene.add(clickPoint);
 
         var points = [];
-        points.push(new THREE.Vector3(0, 0, 0));
+        points.push(new THREE.Vector3(this.playerPos.x, 2, this.playerPos.y));
         points.push(new THREE.Vector3(moveToPosX, 2, moveToPosY));
 
         var geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -123,6 +185,11 @@ export default defineComponent({
 
         scene.add(line);
       }
+
+      this.animateMovement(
+        { x: this.playerPos.x, z: 0, y: this.playerPos.y },
+        { x: moveToPosX, z: 0, y: moveToPosY }
+      );
     },
     handleKey(key) {
       var object = scene.getObjectByName(this.playerName, true);
@@ -178,11 +245,11 @@ export default defineComponent({
       "benceBouncer.bmp",
       "bence"
     );
-    console.log("Done with Bence");
+    //console.log("Done with Bence");
 
     //test grass
     await loadObject(scene, camera, "cube.obj", "grass.bmp", "ground");
-    console.log("Done with grass");
+    //console.log("Done with grass");
 
     //test duck
     await loadObject(
@@ -192,7 +259,7 @@ export default defineComponent({
       "rubberDuck.bmp",
       "originalRubberDucky"
     );
-    console.log("Done with rubberDuck");
+    //console.log("Done with rubberDuck");
 
     //access the objects in the scene
     setTimeout(() => {
