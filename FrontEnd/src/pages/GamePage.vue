@@ -5,6 +5,29 @@
     <q-btn color="primary" label="<=" @click="turnLeft" />
     <q-btn color="primary" label="=>" @click="turnRight" />
   </div>
+
+  <div class="hotbar">
+    <q-btn
+      color="primary"
+      @click="activateHotbar(hotbarItem.index)"
+      v-for="hotbarItem in hotbar"
+      :key="hotbarItem.id"
+      dense
+    >
+      <q-img
+        src="https://cdn.quasar.dev/img/parallax2.jpg"
+        width="50px"
+        height="50px"
+      >
+        <div
+          class="absolute-bottom text-center hotbarItemCount"
+          v-if="hotbarItem.type != 'formation'"
+        >
+          155k
+        </div>
+      </q-img>
+    </q-btn>
+  </div>
 </template>
 
 <script>
@@ -19,6 +42,7 @@ import {
   setupDrones,
   defaultFormation,
   turtleFormation,
+  handleFormationCall,
 } from "assets/scripts/drones";
 
 let scene, camera, renderer;
@@ -35,9 +59,70 @@ export default defineComponent({
         x: 0,
         y: 0,
       },
+      hotbar: [
+        {
+          item: "default",
+          type: "formation",
+          value: 0,
+          index: 0,
+        },
+        {
+          item: "turtle",
+          type: "formation",
+          value: 0,
+          index: 1,
+        },
+        {
+          item: "LCB-10",
+          type: "laserAmmo",
+          value: 1255,
+          index: 2,
+        },
+        {
+          item: "",
+          type: "empty",
+          value: 0,
+          index: 3,
+        },
+        {
+          item: "",
+          type: "empty",
+          value: 0,
+          index: 4,
+        },
+        {
+          item: "",
+          type: "empty",
+          value: 0,
+          index: 5,
+        },
+        {
+          item: "",
+          type: "empty",
+          value: 0,
+          index: 6,
+        },
+        {
+          item: "",
+          type: "empty",
+          value: 0,
+          index: 7,
+        },
+        {
+          item: "",
+          type: "empty",
+          value: 0,
+          index: 8,
+        },
+      ],
     };
   },
   methods: {
+    activateHotbar(nthItem) {
+      if (this.hotbar[nthItem].type == "formation") {
+        handleFormationCall(this.hotbar[nthItem].item, scene);
+      }
+    },
     async animateMovement(from, to) {
       var begPoint = new THREE.Vector3(from.x, from.z, from.y);
       var endPoint = new THREE.Vector3(to.x, to.z, to.y);
@@ -46,7 +131,7 @@ export default defineComponent({
       var steps = Math.ceil(distance / 1);
       var time = 30;
 
-      console.log("From", from, "\nTO", to);
+      //console.log("From", from, "\nTO", to);
 
       if (steps > 0) {
         let xStepAmount = 0,
@@ -65,7 +150,7 @@ export default defineComponent({
           yStepAmount = (from.y - to.y) / steps;
           yStepAmount *= -1;
         }
-        console.log("X+ ", xStepAmount, "\nY+", yStepAmount);
+        //console.log("X+ ", xStepAmount, "\nY+", yStepAmount);
 
         const animFrame = window.setInterval(() => {
           this.playerPos.x += xStepAmount;
@@ -95,7 +180,7 @@ export default defineComponent({
           if (steps <= 0) {
             window.clearInterval(animFrame);
 
-            console.log("DONE MOVING", this.playerPos);
+            //console.log("DONE MOVING", this.playerPos);
             object = scene.getObjectByName("pathToClick", true);
             scene.remove(object);
             object = scene.getObjectByName("tempClickPoint", true);
@@ -113,9 +198,6 @@ export default defineComponent({
       object.rotation.y -= 0.1;
     },
     movePlayer(ev) {
-      console.log(ev.clientX);
-      console.log(ev.clientY);
-
       const screenMiddleX = window.innerWidth / 2;
       const screenMiddleY = window.innerHeight / 2;
 
@@ -127,21 +209,8 @@ export default defineComponent({
 
       var moveToPosX = this.playerPos.x + moveByX;
       var moveToPosY = this.playerPos.y + moveByY;
-      //this.playerPos.x += moveByX;
-      //this.playerPos.y += moveByY;
 
       var object = scene.getObjectByName(this.playerName, true);
-      // object.position.set(
-      //   object.position.x + moveByX,
-      //   0,
-      //   object.position.z + moveByY
-      // );
-
-      // camera.position.set(
-      //   camera.position.x + moveByX,
-      //   camera.position.y,
-      //   camera.position.z + moveByY
-      // );
 
       let objectFound = false;
       for (let i = 0; i < scene.children.length; i++) {
@@ -153,7 +222,7 @@ export default defineComponent({
       if (objectFound) {
         object = scene.getObjectByName("tempClickPoint", true);
         object.position.set(moveToPosX, 2, moveToPosY);
-        console.log("CLICKPOINT MOVED TO: " + moveToPosX + "/" + moveToPosY);
+        //console.log("CLICKPOINT MOVED TO: " + moveToPosX + "/" + moveToPosY);
 
         object = scene.getObjectByName("pathToClick", true);
         scene.remove(object);
@@ -174,7 +243,7 @@ export default defineComponent({
         clickPoint.name = "tempClickPoint";
         clickPoint.position.set(moveToPosX, 2, moveToPosY);
         clickPoint.scale.set(1, 1, 1);
-        console.log("CLICKPOINT ADDED TO: " + moveToPosX + "/" + moveToPosY);
+        //console.log("CLICKPOINT ADDED TO: " + moveToPosX + "/" + moveToPosY);
 
         scene.add(clickPoint);
 
@@ -324,5 +393,17 @@ export default defineComponent({
   button {
     margin: 10px;
   }
+}
+
+.hotbar {
+  width: 522px;
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.hotbarItemCount {
+  padding: 0px;
 }
 </style>

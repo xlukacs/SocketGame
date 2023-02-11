@@ -9,3 +9,4 @@ FIX UI:
 LOGIC:
 
 - In the game fix the dumb way of waiting with setInterval to be able to acces the objects in the scene
+- isActive status of hotbar items visual missing

@@ -48,6 +48,12 @@ export function setupDrones(scene, playerName) {
   defaultFormation(scene);
 }
 
+export function handleFormationCall(formation, scene) {
+  if (formation == "default") defaultFormation(scene);
+
+  if (formation == "turtle") turtleFormation(scene);
+}
+
 export function defaultFormation(scene) {
   var object = scene.getObjectByName("drone1", true);
   //left
