@@ -8,20 +8,16 @@
 
   <div class="hotbar">
     <q-btn
-      color="primary"
+      :color="hotbarItem.isActive ? 'info' : 'primary'"
       @click="activateHotbar(hotbarItem.index)"
       v-for="hotbarItem in hotbar"
       :key="hotbarItem.id"
       dense
     >
-      <q-img
-        src="https://cdn.quasar.dev/img/parallax2.jpg"
-        width="50px"
-        height="50px"
-      >
+      <q-img :src="hotbarItem.bg" width="50px" height="50px">
         <div
           class="absolute-bottom text-center hotbarItemCount"
-          v-if="hotbarItem.type != 'formation'"
+          v-if="hotbarItem.type != 'formation' && hotbarItem.type != 'empty'"
         >
           155k
         </div>
@@ -44,6 +40,7 @@ import {
   turtleFormation,
   handleFormationCall,
 } from "assets/scripts/drones";
+import { activateSlot } from "assets/scripts/hotbar";
 
 let scene, camera, renderer;
 
@@ -65,54 +62,72 @@ export default defineComponent({
           type: "formation",
           value: 0,
           index: 0,
+          bg: "assets/pic/drones/defaultFormation.png",
+          isActive: true,
         },
         {
           item: "turtle",
           type: "formation",
           value: 0,
           index: 1,
+          bg: "assets/pic/drones/turtleFormation.png",
+          isActive: false,
         },
         {
           item: "LCB-10",
           type: "laserAmmo",
           value: 1255,
           index: 2,
+          bg: "assets/pic/ammo/lcb10.png",
+          isActive: true,
         },
         {
           item: "",
           type: "empty",
           value: 0,
           index: 3,
+          bg: "assets/pic/emptyHotbar.png",
+          isActive: false,
         },
         {
           item: "",
           type: "empty",
           value: 0,
           index: 4,
+          bg: "assets/pic/emptyHotbar.png",
+          isActive: false,
         },
         {
           item: "",
           type: "empty",
           value: 0,
           index: 5,
+          bg: "assets/pic/emptyHotbar.png",
+          isActive: false,
         },
         {
           item: "",
           type: "empty",
           value: 0,
           index: 6,
+          bg: "assets/pic/emptyHotbar.png",
+          isActive: false,
         },
         {
           item: "",
           type: "empty",
           value: 0,
           index: 7,
+          bg: "assets/pic/emptyHotbar.png",
+          isActive: false,
         },
         {
           item: "",
           type: "empty",
           value: 0,
           index: 8,
+          bg: "assets/pic/emptyHotbar.png",
+          isActive: false,
         },
       ],
     };
@@ -121,6 +136,7 @@ export default defineComponent({
     activateHotbar(nthItem) {
       if (this.hotbar[nthItem].type == "formation") {
         handleFormationCall(this.hotbar[nthItem].item, scene);
+        activateSlot(this.hotbar, nthItem);
       }
     },
     async animateMovement(from, to) {
