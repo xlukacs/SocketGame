@@ -20,9 +20,16 @@
             <section>
               <h6>Lasers</h6>
               <div class="slots">
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
+                <div class="slot" @drop="drop" @dragover="allowDrop"></div>
+                <div class="slot" @drop="drop" @dragover="allowDrop">
+                  <div
+                    id="item3"
+                    class="item"
+                    draggable="true"
+                    @dragstart="drag"
+                  ></div>
+                </div>
+                <div class="slot" @drop="drop" @dragover="allowDrop"></div>
               </div>
             </section>
           </q-scroll-area>
@@ -33,13 +40,6 @@
             class="bg-dark text-white rounded-borders drones"
             style="height: 350px"
           >
-            <!-- <div id="no-drop" class="drag-drop">#no-drop</div>
-            <div id="yes-drop" class="drag-drop">#yes-drop</div>
-
-            <div id="outer-dropzone" class="dropzone">
-              #outer-dropzone
-              <div id="inner-dropzone" class="dropzone">#inner-dropzone</div>
-            </div> -->
           </q-scroll-area>
         </q-tab-panel>
 
@@ -55,51 +55,15 @@
     </div>
     <div class="inventory">
       <div class="slots">
-        <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <div
-            id="drag1"
-            class="item"
-            draggable="true"
-            ondragstart="drag(event)"
-          ></div>
+        <div class="slot" @drop="drop" @dragover="allowDrop">
+          <div id="item1" class="item" draggable="true" @dragstart="drag"></div>
         </div>
 
-        <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <div
-            id="drag2"
-            class="item"
-            draggable="true"
-            ondragstart="drag(event)"
-          ></div>
+        <div class="slot" @drop="drop" @dragover="allowDrop">
+          <div id="item2" class="item" draggable="true" @dragstart="drag"></div>
         </div>
 
-        <div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <div
-            id="drag3"
-            class="item"
-            draggable="true"
-            ondragstart="drag(event)"
-          ></div>
-        </div>
-
-        <div
-          class="slot"
-          ondrop="drop(event)"
-          ondragover="allowDrop(event)"
-        ></div>
-        <!-- <div class="slot dropzone" id="inner-dropzone">
-          <div id="yes-drop" class="drag-drop">#yes-drop</div>
-        </div>
-
-        <div class="slot dropzone" id="inner-dropzone">
-          <div class="item drag-drop" id="yes-drop"></div>
-        </div>
-
-        <div class="slot dropzone" id="inner-dropzone">
-          <div class="item drag-drop" id="yes-drop"></div>
-        </div>
-
-        <div class="slot dropzone" id="inner-dropzone"></div> -->
+        <div class="slot" @drop="drop" @dragover="allowDrop"></div>
       </div>
     </div>
   </q-page>
@@ -114,7 +78,7 @@ export default defineComponent({
   name: "ConfigShipPage",
   setup() {
     return {
-      tab: ref("drones"),
+      tab: ref("ship"),
     };
   },
   methods: {
@@ -123,7 +87,6 @@ export default defineComponent({
     },
     drag(ev) {
       ev.dataTransfer.setData("text", ev.target.id);
-      console.log("EV");
     },
     drop(ev) {
       ev.preventDefault();
@@ -225,6 +188,12 @@ section {
       width: 30px;
       height: 30px;
       border: 1px solid gray;
+      .item {
+        width: 26px;
+        height: 26px;
+        margin: 1px;
+        background-color: red;
+      }
     }
   }
 }
@@ -237,8 +206,8 @@ section {
     flex-direction: row;
     gap: 20px;
     .slot {
-      width: 230px;
-      height: 130px;
+      width: 30px;
+      height: 30px;
       border: 1px solid gray;
       .item {
         width: 26px;
