@@ -15,55 +15,137 @@
       </q-tabs>
 
       <q-tab-panels v-model="tab" dark animated class="text-white">
-        <q-tab-panel name="ship">
-          <q-scroll-area class="bg-dark text-white ship" style="height: 350px">
-            <section>
-              <h6>Lasers</h6>
-              <div class="slots">
-                <div class="slot" @drop="drop" @dragover="allowDrop"></div>
-                <div class="slot" @drop="drop" @dragover="allowDrop">
+        <q-tab-panel name="ship" style="padding: 0px">
+          <q-scroll-area class="bg-dark text-white ship" style="height: 464px">
+            <div class="column shipConfigDropZones">
+              <section>
+                <h6>Lasers</h6>
+                <div class="slots">
                   <div
-                    id="item3"
-                    class="item"
-                    draggable="true"
-                    @dragstart="drag"
+                    class="slot"
+                    @drop="drop"
+                    @dragover="allowDrop"
+                    v-for="laser in shipConfigs[0].items.lasers"
+                    :key="laser.id"
+                  >
+                    <div
+                      :id="laser.randomID"
+                      class="item"
+                      draggable="true"
+                      @dragstart="drag"
+                    ></div>
+                  </div>
+                  <div
+                    class="slot"
+                    @drop="drop"
+                    @dragover="allowDrop"
+                    v-for="n in shipValues.lasers -
+                    shipConfigs[0].items.lasers.length"
+                    :key="n + 'EmptyLaserSlot'"
                   ></div>
                 </div>
-                <div class="slot" @drop="drop" @dragover="allowDrop"></div>
-              </div>
-            </section>
+              </section>
+              <section>
+                <h6>Shields</h6>
+                <div class="slots">
+                  <div
+                    class="slot"
+                    @drop="drop"
+                    @dragover="allowDrop"
+                    v-for="shield in shipConfigs[0].items.shields"
+                    :key="shield.id"
+                  >
+                    <div
+                      :id="shield.randomID"
+                      class="item"
+                      draggable="true"
+                      @dragstart="drag"
+                    ></div>
+                  </div>
+                  <div
+                    class="slot"
+                    @drop="drop"
+                    @dragover="allowDrop"
+                    v-for="n in shipValues.shields -
+                    shipConfigs[0].items.shields.length"
+                    :key="n + 'EmptyShieldSlot'"
+                  ></div>
+                </div>
+              </section>
+            </div>
           </q-scroll-area>
         </q-tab-panel>
 
-        <q-tab-panel name="drones">
+        <q-tab-panel name="drones" style="padding: 0px">
           <q-scroll-area
             class="bg-dark text-white rounded-borders drones"
-            style="height: 350px"
+            style="height: 464px"
           >
           </q-scroll-area>
         </q-tab-panel>
 
-        <q-tab-panel name="pet">
+        <q-tab-panel name="pet" style="padding: 0px">
           <q-scroll-area
             class="bg-dark text-white rounded-borders"
-            style="height: 350px"
+            style="height: 464px"
           >
             pet
           </q-scroll-area>
         </q-tab-panel>
       </q-tab-panels>
     </div>
-    <div class="inventory">
+    <div class="inventory bg-dark">
       <div class="slots">
-        <div class="slot" @drop="drop" @dragover="allowDrop">
+        <!-- <div class="slot" @drop="drop" @dragover="allowDrop">
           <div id="item1" class="item" draggable="true" @dragstart="drag"></div>
         </div>
 
         <div class="slot" @drop="drop" @dragover="allowDrop">
           <div id="item2" class="item" draggable="true" @dragstart="drag"></div>
+        </div> -->
+
+        <!-- LASERS -->
+        <div
+          class="slot"
+          @drop="drop"
+          @dragover="allowDrop"
+          v-for="laser in shipConfigs[0].items.lasers"
+          :key="laser.id"
+        >
+          <div
+            :id="laser.randomID"
+            class="item"
+            draggable="true"
+            @dragstart="drag"
+          ></div>
         </div>
 
-        <div class="slot" @drop="drop" @dragover="allowDrop"></div>
+        <!-- SHIELDS -->
+        <div
+          class="slot"
+          @drop="drop"
+          @dragover="allowDrop"
+          v-for="shield in shipConfigs[0].items.shields"
+          :key="shield.id"
+        >
+          <div
+            :id="shield.randomID"
+            class="item"
+            draggable="true"
+            @dragstart="drag"
+          ></div>
+        </div>
+
+        <!-- EMPTY SLOTS -->
+        <div
+          class="slot"
+          @drop="drop"
+          @dragover="allowDrop"
+          v-for="n in 135 -
+          shipConfigs[0].items.lasers.length -
+          shipConfigs[0].items.shields.length"
+          :key="n + 'EmptyShieldSlot'"
+        ></div>
       </div>
     </div>
   </q-page>
@@ -81,6 +163,57 @@ export default defineComponent({
       tab: ref("ship"),
     };
   },
+  data() {
+    return {
+      shipValues: {
+        lasers: 10,
+        shields: 8,
+      },
+      shipConfigs: [
+        {
+          config: 1,
+          items: {
+            lasers: [
+              {
+                itemName: "LF-4",
+                randomID: "HN7LKGLUAP",
+                bg: "pic/items/lasers/lf4.png",
+              },
+            ],
+            shields: [
+              {
+                itemName: "BO3",
+                randomID: "CEHNOF7EZE",
+                bg: "pic/items/shields/bo3.png",
+              },
+              {
+                itemName: "BO3",
+                randomID: "CEHNOF7EZE2",
+                bg: "pic/items/shields/bo3.png",
+              },
+            ],
+          },
+        },
+      ],
+      inventory: [
+        {
+          itemName: "LF-4",
+          randomID: "DOODLEYDOO",
+          bg: "pic/items/lasers/lf4.png",
+        },
+        {
+          itemName: "LF-4",
+          randomID: "BOOMBASTIC",
+          bg: "pic/items/lasers/lf4.png",
+        },
+        {
+          itemName: "BO3",
+          randomID: "NOTSORANDOM",
+          bg: "pic/items/shields/bo3.png",
+        },
+      ],
+    };
+  },
   methods: {
     allowDrop(ev) {
       ev.preventDefault();
@@ -94,96 +227,34 @@ export default defineComponent({
       ev.target.appendChild(document.getElementById(data));
     },
   },
-  mounted() {
-    // // enable draggables to be dropped into this
-    // interact(".dropzone").dropzone({
-    //   // only accept elements matching this CSS selector
-    //   accept: "#yes-drop",
-    //   // Require a 75% element overlap for a drop to be possible
-    //   overlap: 0.75,
-    //   // listen for drop related events:
-    //   ondropactivate: function (event) {
-    //     // add active dropzone feedback
-    //     event.target.classList.add("drop-active");
-    //   },
-    //   ondragenter: function (event) {
-    //     var draggableElement = event.relatedTarget;
-    //     var dropzoneElement = event.target;
-    //     // feedback the possibility of a drop
-    //     dropzoneElement.classList.add("drop-target");
-    //     draggableElement.classList.add("can-drop");
-    //     draggableElement.textContent = "Dragged in";
-    //   },
-    //   ondragleave: function (event) {
-    //     // remove the drop feedback style
-    //     event.target.classList.remove("drop-target");
-    //     event.relatedTarget.classList.remove("can-drop");
-    //     event.relatedTarget.textContent = "Dragged out";
-    //   },
-    //   ondrop: function (event) {
-    //     var draggableElement = event.relatedTarget;
-    //     draggableElement.textContent = "Dropped";
-    //     //var dropzoneElement = event.target;
-    //     //var rect = dropzoneElement.getBoundingClientRect();
-    //     //var x = rect.left + rect.width / 2;
-    //     //var y = rect.top + rect.height / 2;
-    //     // interact(draggableElement).snap({
-    //     //   mode: "anchor",
-    //     //   anchors: [{ x: x, y: y }],
-    //     //   range: Infinity,
-    //     //   elementOrigin: { x: 0.5, y: 0.5 },
-    //     //   endOnly: true,
-    //     // });
-    //     // interact(draggableElement).draggable({
-    //     //   modifiers: [
-    //     //     interact.modifiers.restrictRect({
-    //     //       restriction: dropzoneElement.parentNode,
-    //     //       endOnly: true,
-    //     //     }),
-    //     //   ],
-    //     // });
-    //   },
-    //   ondropdeactivate: function (event) {
-    //     // remove active dropzone feedback
-    //     event.target.classList.remove("drop-active");
-    //     event.target.classList.remove("drop-target");
-    //   },
-    // });
-    // interact(".drag-drop").draggable({
-    //   inertia: true,
-    //   modifiers: [
-    //     interact.modifiers.restrictRect({
-    //       restriction: "self",
-    //       endOnly: true,
-    //     }),
-    //   ],
-    //   autoScroll: true,
-    //   // dragMoveListener from the dragging demo above
-    //   listeners: {
-    //     move(event) {
-    //       var target = event.target;
-    //       // keep the dragged position in the data-x/data-y attributes
-    //       var x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
-    //       var y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
-    //       // translate the element
-    //       target.style.transform = "translate(" + x + "px, " + y + "px)";
-    //       // update the posiion attributes
-    //       target.setAttribute("data-x", x);
-    //       target.setAttribute("data-y", y);
-    //     },
-    //   },
-    // });
-  },
+  mounted() {},
 });
 </script>
 
 <style lang="scss" scoped>
+.shipConfig {
+  width: 500px;
+  height: 500px;
+}
+.inventory {
+  width: 300px;
+  height: 500px;
+}
+
+.shipConfigDropZones {
+  section {
+    padding: 5px 15px;
+    border-bottom: 1px solid gray;
+  }
+}
+
 section {
   background-color: lightgray;
   .slots {
     display: flex;
     flex-direction: row;
     gap: 2px;
+    flex-wrap: wrap;
     .slot {
       width: 30px;
       height: 30px;
@@ -199,12 +270,14 @@ section {
 }
 
 .inventory {
-  width: 200px;
   .slots {
+    padding-left: 7px;
+    padding-top: 10px;
     width: 100%;
     display: flex;
     flex-direction: row;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 2px;
     .slot {
       width: 30px;
       height: 30px;
@@ -217,56 +290,5 @@ section {
       }
     }
   }
-}
-</style>
-
-<style>
-#outer-dropzone {
-  /* height: 140px; */
-}
-
-#inner-dropzone {
-  /* height: 80px; */
-}
-
-.dropzone {
-  background-color: #bfe4ff;
-  border: dashed 4px transparent;
-  border-radius: 4px;
-  margin: 10px auto 30px;
-  padding: 10px;
-  width: 80%;
-  transition: background-color 0.3s;
-}
-
-.drop-active {
-  border-color: #aaa;
-}
-
-.drop-target {
-  background-color: #29e;
-  border-color: #fff;
-  border-style: solid;
-}
-
-.drag-drop {
-  display: inline-block;
-  min-width: 40px;
-  padding: 2em 0.5em;
-  margin: 1rem 0 0 1rem;
-
-  color: #fff;
-  background-color: #29e;
-  border: solid 2px #fff;
-
-  touch-action: none;
-  transform: translate(0px, 0px);
-
-  transition: background-color 0.3s;
-}
-
-.drag-drop.can-drop {
-  color: #000;
-  background-color: #4e4;
 }
 </style>
