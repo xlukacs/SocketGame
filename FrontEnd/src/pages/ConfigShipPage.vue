@@ -23,7 +23,7 @@
                 <div class="slots">
                   <div
                     class="slot"
-                    @drop="drop"
+                    @drop="drop($event, 'laser')"
                     @dragover="allowDrop"
                     v-for="laser in shipConfigs[0].items.lasers"
                     :key="laser.id"
@@ -33,11 +33,12 @@
                       class="item"
                       draggable="true"
                       @dragstart="drag"
+                      :type="laser.type"
                     ></div>
                   </div>
                   <div
                     class="slot"
-                    @drop="drop"
+                    @drop="drop($event, 'laser')"
                     @dragover="allowDrop"
                     v-for="n in shipValues.lasers -
                     shipConfigs[0].items.lasers.length"
@@ -50,7 +51,7 @@
                 <div class="slots">
                   <div
                     class="slot"
-                    @drop="drop"
+                    @drop="drop($event, 'shield')"
                     @dragover="allowDrop"
                     v-for="shield in shipConfigs[0].items.shields"
                     :key="shield.id"
@@ -60,11 +61,12 @@
                       class="item"
                       draggable="true"
                       @dragstart="drag"
+                      :type="shield.type"
                     ></div>
                   </div>
                   <div
                     class="slot"
-                    @drop="drop"
+                    @drop="drop($event, 'shield')"
                     @dragover="allowDrop"
                     v-for="n in shipValues.shields -
                     shipConfigs[0].items.shields.length"
@@ -99,7 +101,7 @@
         <!-- general -->
         <div
           class="slot"
-          @drop="drop"
+          @drop="drop($event, 'general')"
           @dragover="allowDrop"
           v-for="item in inventory"
           :key="item.id"
@@ -109,12 +111,13 @@
             class="item"
             draggable="true"
             @dragstart="drag"
+            :type="item.type"
           ></div>
         </div>
         <!-- General empty -->
         <div
           class="slot"
-          @drop="drop"
+          @drop="drop($event, 'general')"
           @dragover="allowDrop"
           v-for="n in 135 - inventory.length"
           :key="n + 'emptyGeneralInventorySlot'"
@@ -219,16 +222,19 @@ export default defineComponent({
           itemName: "LF-4",
           randomID: "DOODLEYDOO",
           bg: "pic/items/lasers/lf4.png",
+          type: "laser",
         },
         {
           itemName: "LF-4",
           randomID: "BOOMBASTIC",
           bg: "pic/items/lasers/lf4.png",
+          type: "laser",
         },
         {
           itemName: "BO3",
           randomID: "NOTSORANDOM",
           bg: "pic/items/shields/bo3.png",
+          type: "shield",
         },
       ],
     };
@@ -240,10 +246,13 @@ export default defineComponent({
     drag(ev) {
       ev.dataTransfer.setData("text", ev.target.id);
     },
-    drop(ev) {
+    drop(ev, slotType) {
       ev.preventDefault();
       var data = ev.dataTransfer.getData("text");
-      ev.target.appendChild(document.getElementById(data));
+
+      var elem = document.getElementById(data);
+      if (slotType == elem.getAttribute("type") || slotType == "general")
+        ev.target.appendChild(document.getElementById(data));
     },
   },
   mounted() {},
