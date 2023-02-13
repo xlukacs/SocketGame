@@ -96,16 +96,32 @@
     </div>
     <div class="inventory bg-dark">
       <div class="slots">
-        <!-- <div class="slot" @drop="drop" @dragover="allowDrop">
-          <div id="item1" class="item" draggable="true" @dragstart="drag"></div>
+        <!-- general -->
+        <div
+          class="slot"
+          @drop="drop"
+          @dragover="allowDrop"
+          v-for="item in inventory"
+          :key="item.id"
+        >
+          <div
+            :id="item.randomID"
+            class="item"
+            draggable="true"
+            @dragstart="drag"
+          ></div>
         </div>
-
-        <div class="slot" @drop="drop" @dragover="allowDrop">
-          <div id="item2" class="item" draggable="true" @dragstart="drag"></div>
-        </div> -->
+        <!-- General empty -->
+        <div
+          class="slot"
+          @drop="drop"
+          @dragover="allowDrop"
+          v-for="n in 135 - inventory.length"
+          :key="n + 'emptyGeneralInventorySlot'"
+        ></div>
 
         <!-- LASERS -->
-        <div
+        <!-- <div
           class="slot"
           @drop="drop"
           @dragover="allowDrop"
@@ -118,10 +134,10 @@
             draggable="true"
             @dragstart="drag"
           ></div>
-        </div>
+        </div> -->
 
         <!-- SHIELDS -->
-        <div
+        <!-- <div
           class="slot"
           @drop="drop"
           @dragover="allowDrop"
@@ -134,10 +150,10 @@
             draggable="true"
             @dragstart="drag"
           ></div>
-        </div>
+        </div> -->
 
         <!-- EMPTY SLOTS -->
-        <div
+        <!-- <div
           class="slot"
           @drop="drop"
           @dragover="allowDrop"
@@ -145,7 +161,7 @@
           shipConfigs[0].items.lasers.length -
           shipConfigs[0].items.shields.length"
           :key="n + 'EmptyShieldSlot'"
-        ></div>
+        ></div> -->
       </div>
     </div>
   </q-page>
@@ -178,6 +194,7 @@ export default defineComponent({
                 itemName: "LF-4",
                 randomID: "HN7LKGLUAP",
                 bg: "pic/items/lasers/lf4.png",
+                type: "laser",
               },
             ],
             shields: [
@@ -185,11 +202,13 @@ export default defineComponent({
                 itemName: "BO3",
                 randomID: "CEHNOF7EZE",
                 bg: "pic/items/shields/bo3.png",
+                type: "shield",
               },
               {
                 itemName: "BO3",
                 randomID: "CEHNOF7EZE2",
                 bg: "pic/items/shields/bo3.png",
+                type: "shield",
               },
             ],
           },
