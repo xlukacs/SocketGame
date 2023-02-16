@@ -83,6 +83,69 @@
             class="bg-dark text-white rounded-borders drones"
             style="height: 464px"
           >
+            <div class="column shipConfigDropZones">
+              <section
+                v-for="drone in shipConfigs[0].drones"
+                :key="drone.id"
+                class="drone"
+              >
+                <h6>{{ drone.name }}</h6>
+                <q-img
+                  :src="drone.bg"
+                  spinner-color="primary"
+                  spinner-size="82px"
+                  width="70px"
+                  height="70px"
+                  class="droneImg"
+                />
+                <div class="slots droneItems row items-end">
+                  <div
+                    class="slot"
+                    @drop="drop($event, 'droneGeneralSlot')"
+                    @dragover="allowDrop"
+                  >
+                    <div
+                      v-if="drone.items[0]"
+                      :id="drone.items[0].randomID"
+                      class="item"
+                      draggable="true"
+                      @dragstart="drag"
+                      :type="drone.items[0].type"
+                    ></div>
+                  </div>
+                  <div
+                    class="slot"
+                    @drop="drop($event, 'droneGeneralSlot')"
+                    @dragover="allowDrop"
+                  >
+                    <div
+                      v-if="drone.items[1]"
+                      :id="drone.items[1].randomID"
+                      class="item"
+                      draggable="true"
+                      @dragstart="drag"
+                      :type="drone.items[1].type"
+                    ></div>
+                  </div>
+                </div>
+                <div class="slots droneDesign row items-end">
+                  <div
+                    class="slot"
+                    @drop="drop($event, 'droneDesignSlot')"
+                    @dragover="allowDrop"
+                  >
+                    <div
+                      v-if="drone.design.name"
+                      :id="drone.design.randomID"
+                      class="item"
+                      draggable="true"
+                      @dragstart="drag"
+                      :type="drone.design.type"
+                    ></div>
+                  </div>
+                </div>
+              </section>
+            </div>
           </q-scroll-area>
         </q-tab-panel>
 
@@ -114,6 +177,7 @@
             :type="item.type"
           ></div>
         </div>
+
         <!-- General empty -->
         <div
           class="slot"
@@ -122,49 +186,6 @@
           v-for="n in 135 - inventory.length"
           :key="n + 'emptyGeneralInventorySlot'"
         ></div>
-
-        <!-- LASERS -->
-        <!-- <div
-          class="slot"
-          @drop="drop"
-          @dragover="allowDrop"
-          v-for="laser in shipConfigs[0].items.lasers"
-          :key="laser.id"
-        >
-          <div
-            :id="laser.randomID"
-            class="item"
-            draggable="true"
-            @dragstart="drag"
-          ></div>
-        </div> -->
-
-        <!-- SHIELDS -->
-        <!-- <div
-          class="slot"
-          @drop="drop"
-          @dragover="allowDrop"
-          v-for="shield in shipConfigs[0].items.shields"
-          :key="shield.id"
-        >
-          <div
-            :id="shield.randomID"
-            class="item"
-            draggable="true"
-            @dragstart="drag"
-          ></div>
-        </div> -->
-
-        <!-- EMPTY SLOTS -->
-        <!-- <div
-          class="slot"
-          @drop="drop"
-          @dragover="allowDrop"
-          v-for="n in 135 -
-          shipConfigs[0].items.lasers.length -
-          shipConfigs[0].items.shields.length"
-          :key="n + 'EmptyShieldSlot'"
-        ></div> -->
       </div>
     </div>
   </q-page>
@@ -179,7 +200,7 @@ export default defineComponent({
   name: "ConfigShipPage",
   setup() {
     return {
-      tab: ref("ship"),
+      tab: ref("drones"),
     };
   },
   data() {
@@ -215,6 +236,86 @@ export default defineComponent({
               },
             ],
           },
+          drones: [
+            {
+              name: "Iris",
+              bg: "pic/drones/iris.png",
+              items: [
+                {
+                  itemName: "LF-4",
+                  randomID: "HN7LKGLUAPE",
+                  bg: "pic/items/lasers/lf4.png",
+                  type: "laser",
+                },
+                {
+                  itemName: "LF-4",
+                  randomID: "HN7LKGLUATP",
+                  bg: "pic/items/lasers/lf4.png",
+                  type: "laser",
+                },
+              ],
+              design: {
+                name: "havoc",
+                randomID: "COHESIVE",
+                bg: "pic/items/drones/havoc.png",
+                type: "droneDesign",
+              },
+            },
+            {
+              name: "Iris",
+              bg: "pic/drones/iris.png",
+              items: [],
+              design: {},
+            },
+            {
+              name: "Iris",
+              bg: "pic/drones/iris.png",
+              items: [],
+              design: {},
+            },
+            {
+              name: "Iris",
+              bg: "pic/drones/iris.png",
+              items: [],
+              design: {},
+            },
+            {
+              name: "Iris",
+              bg: "pic/drones/iris.png",
+              items: [],
+              design: {},
+            },
+            {
+              name: "Iris",
+              bg: "pic/drones/iris.png",
+              items: [],
+              design: {},
+            },
+            {
+              name: "Iris",
+              bg: "pic/drones/iris.png",
+              items: [],
+              design: {},
+            },
+            {
+              name: "Iris",
+              bg: "pic/drones/iris.png",
+              items: [],
+              design: {},
+            },
+            {
+              name: "Apis",
+              bg: "pic/drones/apis.png",
+              items: [],
+              design: {},
+            },
+            {
+              name: "Zeus",
+              bg: "pic/drones/zeus.png",
+              items: [],
+              design: {},
+            },
+          ],
         },
       ],
       inventory: [
@@ -251,7 +352,22 @@ export default defineComponent({
       var data = ev.dataTransfer.getData("text");
 
       var elem = document.getElementById(data);
+      //inventory
       if (slotType == elem.getAttribute("type") || slotType == "general")
+        ev.target.appendChild(document.getElementById(data));
+
+      //drone
+      if (
+        ("laser" == elem.getAttribute("type") ||
+          "shield" == elem.getAttribute("type")) &&
+        slotType == "droneGeneralSlot"
+      )
+        ev.target.appendChild(document.getElementById(data));
+
+      if (
+        "droneDesign" == elem.getAttribute("type") &&
+        slotType == "droneDesignSlot"
+      )
         ev.target.appendChild(document.getElementById(data));
     },
   },
@@ -317,6 +433,27 @@ section {
         background-color: red;
       }
     }
+  }
+}
+
+.drone {
+  display: grid;
+  grid-template-areas: "name name name" "pic items design";
+  grid-template-rows: 30px 70px;
+  grid-template-columns: 70px auto auto;
+  h6 {
+    grid-area: name;
+    padding: 0px;
+    margin: 0px;
+  }
+  .droneImg {
+    grid-area: pic;
+  }
+  .droneItems {
+    grid-area: items;
+  }
+  .droneDesign {
+    grid-area: design;
   }
 }
 </style>
