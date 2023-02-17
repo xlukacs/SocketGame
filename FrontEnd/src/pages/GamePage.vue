@@ -54,6 +54,7 @@ import {
   getCoordsToMoveTo,
   placeIndicator,
 } from "assets/scripts/managers/movementManager";
+import { mapGetters } from "vuex";
 
 let scene, camera, renderer;
 
@@ -66,6 +67,9 @@ export default defineComponent({
     loadingProgressLabel() {
       return (this.loadingProgress * 100).toFixed(2) + "%";
     },
+    ...mapGetters("drones", {
+      drones: "getAllDrones",
+    }),
   },
   data() {
     return {
@@ -328,7 +332,7 @@ export default defineComponent({
 
     await setInitPositions(scene, this.playerName);
 
-    setupDrones(scene, this.playerName);
+    setupDrones(scene, this.playerName, this.drones);
 
     // render loop
     const animate = () => {

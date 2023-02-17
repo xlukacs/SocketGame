@@ -2,7 +2,7 @@ import { loadTexture } from "./util";
 import { MeshLambertMaterial } from "three/src/materials/MeshLambertMaterial";
 import { Mesh } from "three";
 
-export function setupDrones(scene, playerName) {
+export function setupDrones(scene, playerName, drones) {
   //spawn drones
   var object = scene.getObjectByName("originalRubberDucky", true);
   let drone1 = object.clone();
@@ -49,7 +49,22 @@ export function setupDrones(scene, playerName) {
   object.add(drone9);
   object.add(drone10);
 
+  //set default formation TODO last used formation
   defaultFormation(scene);
+
+  //set the proper skin for the drones
+  for (let i = 0; i < drones.length; i++) {
+    const drone = drones[i];
+
+    if (drone.design.name != undefined) {
+      changeDroneDesign(
+        scene,
+        "drone" + (i + 1),
+        drone.design.name,
+        drone.design.skin
+      );
+    }
+  }
 }
 
 export function handleFormationCall(formation, scene) {
@@ -165,7 +180,8 @@ export async function changeDroneDesign(scene, droneName, toType, toSkin) {
   //select drone
   var drone = scene.getObjectByName(droneName, true);
 
-  //change drone type and its stats TODO
+  //change drone type and its stats
+  //TODO
 
   //change drone skin/texture
   const texture = await loadTexture(toSkin);

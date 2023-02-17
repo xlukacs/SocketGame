@@ -194,7 +194,7 @@
 <script>
 import { defineComponent, ref } from "vue";
 
-import interact from "interactjs";
+import { mapGetters } from "vuex";
 
 export default defineComponent({
   name: "ConfigShipPage",
@@ -202,6 +202,11 @@ export default defineComponent({
     return {
       tab: ref("drones"),
     };
+  },
+  computed: {
+    ...mapGetters("drones", {
+      dronesData: "getAllDrones",
+    }),
   },
   data() {
     return {
@@ -236,86 +241,7 @@ export default defineComponent({
               },
             ],
           },
-          drones: [
-            {
-              name: "Iris",
-              bg: "pic/drones/iris.png",
-              items: [
-                {
-                  itemName: "LF-4",
-                  randomID: "HN7LKGLUAPE",
-                  bg: "pic/items/lasers/lf4.png",
-                  type: "laser",
-                },
-                {
-                  itemName: "LF-4",
-                  randomID: "HN7LKGLUATP",
-                  bg: "pic/items/lasers/lf4.png",
-                  type: "laser",
-                },
-              ],
-              design: {
-                name: "havoc",
-                randomID: "COHESIVE",
-                bg: "pic/items/drones/havoc.png",
-                type: "droneDesign",
-              },
-            },
-            {
-              name: "Iris",
-              bg: "pic/drones/iris.png",
-              items: [],
-              design: {},
-            },
-            {
-              name: "Iris",
-              bg: "pic/drones/iris.png",
-              items: [],
-              design: {},
-            },
-            {
-              name: "Iris",
-              bg: "pic/drones/iris.png",
-              items: [],
-              design: {},
-            },
-            {
-              name: "Iris",
-              bg: "pic/drones/iris.png",
-              items: [],
-              design: {},
-            },
-            {
-              name: "Iris",
-              bg: "pic/drones/iris.png",
-              items: [],
-              design: {},
-            },
-            {
-              name: "Iris",
-              bg: "pic/drones/iris.png",
-              items: [],
-              design: {},
-            },
-            {
-              name: "Iris",
-              bg: "pic/drones/iris.png",
-              items: [],
-              design: {},
-            },
-            {
-              name: "Apis",
-              bg: "pic/drones/apis.png",
-              items: [],
-              design: {},
-            },
-            {
-              name: "Zeus",
-              bg: "pic/drones/zeus.png",
-              items: [],
-              design: {},
-            },
-          ],
+          drones: dronesData,
         },
       ],
       inventory: [
@@ -367,8 +293,10 @@ export default defineComponent({
       if (
         "droneDesign" == elem.getAttribute("type") &&
         slotType == "droneDesignSlot"
-      )
+      ) {
         ev.target.appendChild(document.getElementById(data));
+        //UPDATE drone design here
+      }
     },
   },
   mounted() {},
