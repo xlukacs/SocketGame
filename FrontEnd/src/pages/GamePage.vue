@@ -1,12 +1,26 @@
 <template>
+  <div class="loadingScreen" v-if="loading">
+    <h1>Game loading, please wait...</h1>
+    <q-linear-progress size="25px" :value="loadingProgress" color="accent">
+      <div class="absolute-full flex flex-center">
+        <q-badge
+          color="white"
+          text-color="accent"
+          :label="loadingProgressLabel"
+        ></q-badge>
+      </div>
+    </q-linear-progress>
+  </div>
+
   <div id="gameArea" v-on:click="movePlayer"></div>
-  <div class="errorMessage">Please wait...</div>
-  <div class="controlsMobile">
+  <div class="errorMessage" v-if="errorMessage">{{ errorMessage }}</div>
+
+  <div class="controlsMobile" v-if="!loading">
     <q-btn color="primary" label="<=" @click="turnLeft" />
     <q-btn color="primary" label="=>" @click="turnRight" />
   </div>
 
-  <div class="hotbar">
+  <div class="hotbar" v-if="!loading">
     <q-btn
       :color="hotbarItem.isActive ? 'info' : 'primary'"
       @click="activateHotbar(hotbarItem.index)"
@@ -33,14 +47,13 @@ import { DirectionalLight } from "three";
 
 import { defineComponent } from "vue";
 
-import { loadObject } from "assets/scripts/util";
-import {
-  setupDrones,
-  defaultFormation,
-  turtleFormation,
-  handleFormationCall,
-} from "assets/scripts/drones";
+import { setupDrones, handleFormationCall } from "assets/scripts/drones";
 import { activateSlot } from "assets/scripts/hotbar";
+
+import {
+  initAssets,
+  setInitPositions,
+} from "assets/scripts/managers/assetManager";
 
 let scene, camera, renderer;
 
@@ -49,8 +62,21 @@ export default defineComponent({
   setup() {
     return {};
   },
+  computed: {
+    loadingProgressLabel() {
+      return (this.loadingProgress * 100).toFixed(2) + "%";
+    },
+  },
   data() {
     return {
+      loadingProgress: 0.0,
+      loading: true,
+      errorMessage: "",
+      camera: {
+        offsetX: 0,
+        offsetY: 70,
+        offsetZ: 25,
+      },
       playerName: "bence",
       playerPos: {
         x: 0,
@@ -178,7 +204,7 @@ export default defineComponent({
           camera.position.set(
             this.playerPos.x,
             camera.position.y,
-            this.playerPos.y
+            this.playerPos.y + this.camera.offsetZ
           );
 
           object = scene.getObjectByName("pathToClick", true);
@@ -220,8 +246,8 @@ export default defineComponent({
       var moveByX = screenMiddleX - ev.clientX;
       var moveByY = screenMiddleY - ev.clientY;
 
-      moveByX /= -10;
-      moveByY /= -10;
+      moveByX /= -8;
+      moveByY /= -8;
 
       var moveToPosX = this.playerPos.x + moveByX;
       var moveToPosY = this.playerPos.y + moveByY;
@@ -294,10 +320,31 @@ export default defineComponent({
         object.rotation.y -= 0.1;
       }
       if (key.code == "Digit1") {
-        defaultFormation(scene);
+        this.activateHotbar(0);
       }
       if (key.code == "Digit2") {
-        turtleFormation(scene);
+        this.activateHotbar(1);
+      }
+      if (key.code == "Digit3") {
+        this.activateHotbar(2);
+      }
+      if (key.code == "Digit4") {
+        this.activateHotbar(3);
+      }
+      if (key.code == "Digit5") {
+        this.activateHotbar(4);
+      }
+      if (key.code == "Digit6") {
+        this.activateHotbar(5);
+      }
+      if (key.code == "Digit7") {
+        this.activateHotbar(6);
+      }
+      if (key.code == "Digit8") {
+        this.activateHotbar(7);
+      }
+      if (key.code == "Digit9") {
+        this.activateHotbar(8);
       }
     },
     init() {
@@ -315,7 +362,11 @@ export default defineComponent({
         0.1,
         1000
       );
-      camera.position.set(0, 70, 15);
+      camera.position.set(
+        this.camera.offsetX,
+        this.camera.offsetY,
+        this.camera.offsetZ
+      );
 
       //render pipeline
       renderer = new THREE.WebGLRenderer();
@@ -331,60 +382,26 @@ export default defineComponent({
   },
   async mounted() {
     this.init();
+    console.log("Scene created.");
 
-    //testCube
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
-    //test Bence
-    await loadObject(
-      scene,
-      camera,
-      "benceBouncer.obj",
-      "benceBouncer.bmp",
-      "bence"
-    );
-    //console.log("Done with Bence");
+    await initAssets(scene, camera, (progress) => {
+      this.loadingProgress = progress;
+      console.log(this.loadingProgress);
+    });
 
-    //test grass
-    await loadObject(scene, camera, "cube.obj", "grass.bmp", "ground");
-    //console.log("Done with grass");
+    //delay loading screen a bit
+    window.setTimeout(() => {
+      this.loading = false;
+      console.log("Done loading the assets.");
+    }, 500);
 
-    //test duck
-    await loadObject(
-      scene,
-      camera,
-      "rubberDuck.obj",
-      "rubberDuck.bmp",
-      "originalRubberDucky"
-    );
-    //console.log("Done with rubberDuck");
+    await setInitPositions(scene, this.playerName);
 
-    //access the objects in the scene
-    setTimeout(() => {
-      document.getElementsByClassName("errorMessage")[0].style.display = "none";
-      var object = scene.getObjectByName("originalRubberDucky", true);
-      object.position.set(0, 0, 0);
-      object.scale.set(0, 0, 0);
-      object.rotation.x -= Math.PI / 2;
-
-      object = scene.getObjectByName("ground", true);
-      object.position.set(0, 0, 0);
-      object.scale.set(100, 1, 100);
-
-      object = scene.getObjectByName(this.playerName, true);
-      object.position.set(0, 0, 0);
-      object.scale.set(10, 10, 10);
-
-      setupDrones(scene, this.playerName);
-    }, 1000);
+    setupDrones(scene, this.playerName);
 
     // render loop
     const animate = () => {
       requestAnimationFrame(animate);
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
       renderer.render(scene, camera);
     };
     animate();
@@ -393,6 +410,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.loadingScreen {
+  background-color: black;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  color: white;
+}
+
 .errorMessage {
   position: fixed;
   top: 0;

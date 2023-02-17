@@ -7,6 +7,7 @@ import { Mesh } from "three";
 export async function loadObject(scene, camera, objName, textureName, id) {
   const loader = new OBJLoader();
   const textureLoader = new TextureLoader();
+
   return new Promise((resolve, reject) => {
     loader.load(
       "assets/models/" + objName,
@@ -14,19 +15,6 @@ export async function loadObject(scene, camera, objName, textureName, id) {
         const texture = textureLoader.load(
           "assets/models/" + textureName,
           () => {
-            // if (id == "ground") {
-            //   texture.wrapS = THREE.RepeatWrapping;
-            //   texture.wrapT = THREE.RepeatWrapping;
-
-            //   const material = new THREE.MeshBasicMaterial({
-            //     map: texture,
-            //   });
-            // } else {
-            //   const material = new MeshLambertMaterial({
-            //     map: texture,
-            //   });
-            // }
-
             const material = new MeshLambertMaterial({
               map: texture,
             });
@@ -35,15 +23,16 @@ export async function loadObject(scene, camera, objName, textureName, id) {
               if (child instanceof Mesh) child.material = material;
             });
             object.name = id;
-            console.log(object.name + " added to the scene.");
+            object.scale.set(0, 0, 0);
+            object.position.set(0, 0, 0);
+            //console.log(object.name + " added to the scene.");
 
             // Add the mesh to your scene
             scene.add(object);
             camera.lookAt(object.position);
+            resolve();
           }
         );
-
-        resolve();
       },
       // called when loading is in progresses
       function (xhr) {
