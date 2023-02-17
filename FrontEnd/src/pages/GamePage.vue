@@ -15,11 +15,6 @@
   <div id="gameArea" v-on:click="movePlayer"></div>
   <div class="errorMessage" v-if="errorMessage">{{ errorMessage }}</div>
 
-  <div class="controlsMobile" v-if="!loading">
-    <q-btn color="primary" label="<=" @click="turnLeft" />
-    <q-btn color="primary" label="=>" @click="turnRight" />
-  </div>
-
   <div class="hotbar" v-if="!loading">
     <q-btn
       :color="hotbarItem.isActive ? 'info' : 'primary'"
@@ -54,6 +49,11 @@ import {
   initAssets,
   setInitPositions,
 } from "assets/scripts/managers/assetManager";
+
+import {
+  getCoordsToMoveTo,
+  placeIndicator,
+} from "assets/scripts/managers/movementManager";
 
 let scene, camera, renderer;
 
@@ -207,7 +207,7 @@ export default defineComponent({
             this.playerPos.y + this.camera.offsetZ
           );
 
-          object = scene.getObjectByName("pathToClick", true);
+          object = scene.getObjectByName("pathToIndicator", true);
           object.geometry.dispose();
           var points = [];
           points.push(new THREE.Vector3(this.playerPos.x, 2, this.playerPos.y));
@@ -222,87 +222,26 @@ export default defineComponent({
           if (steps <= 0) {
             window.clearInterval(animFrame);
 
-            //console.log("DONE MOVING", this.playerPos);
-            object = scene.getObjectByName("pathToClick", true);
+            object = scene.getObjectByName("pathToIndicator", true);
             scene.remove(object);
-            object = scene.getObjectByName("tempClickPoint", true);
+            object = scene.getObjectByName("indicator", true);
             scene.remove(object);
           }
         }, time);
       }
     },
-    turnLeft() {
-      var object = scene.getObjectByName(this.playerName, true);
-      object.rotation.y += 0.1;
-    },
-    turnRight() {
-      var object = scene.getObjectByName(this.playerName, true);
-      object.rotation.y -= 0.1;
-    },
     movePlayer(ev) {
-      const screenMiddleX = window.innerWidth / 2;
-      const screenMiddleY = window.innerHeight / 2;
+      //calculate the position the player wants to move
+      var { moveToPosX, moveToPosY } = getCoordsToMoveTo(ev, this.playerPos);
 
-      var moveByX = screenMiddleX - ev.clientX;
-      var moveByY = screenMiddleY - ev.clientY;
-
-      moveByX /= -8;
-      moveByY /= -8;
-
-      var moveToPosX = this.playerPos.x + moveByX;
-      var moveToPosY = this.playerPos.y + moveByY;
-
-      var object = scene.getObjectByName(this.playerName, true);
-
-      let objectFound = false;
-      for (let i = 0; i < scene.children.length; i++) {
-        if (scene.children[i].name === "tempClickPoint") {
-          objectFound = true;
-          break;
-        }
-      }
-      if (objectFound) {
-        object = scene.getObjectByName("tempClickPoint", true);
-        object.position.set(moveToPosX, 2, moveToPosY);
-        //console.log("CLICKPOINT MOVED TO: " + moveToPosX + "/" + moveToPosY);
-
-        object = scene.getObjectByName("pathToClick", true);
-        scene.remove(object);
-
-        var points = [];
-        points.push(new THREE.Vector3(this.playerPos.x, 2, this.playerPos.y));
-        points.push(new THREE.Vector3(moveToPosX, 2, moveToPosY));
-
-        var geometry = new THREE.BufferGeometry().setFromPoints(points);
-        var material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-        var line = new THREE.Line(geometry, material);
-        line.name = "pathToClick";
-
-        scene.add(line);
-      } else {
-        object = scene.getObjectByName("originalRubberDucky", true);
-        let clickPoint = object.clone();
-        clickPoint.name = "tempClickPoint";
-        clickPoint.position.set(moveToPosX, 2, moveToPosY);
-        clickPoint.scale.set(1, 1, 1);
-        //console.log("CLICKPOINT ADDED TO: " + moveToPosX + "/" + moveToPosY);
-
-        scene.add(clickPoint);
-
-        var points = [];
-        points.push(new THREE.Vector3(this.playerPos.x, 2, this.playerPos.y));
-        points.push(new THREE.Vector3(moveToPosX, 2, moveToPosY));
-
-        var geometry = new THREE.BufferGeometry().setFromPoints(points);
-        var material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-        var line = new THREE.Line(geometry, material);
-        line.name = "pathToClick";
-
-        scene.add(line);
-      }
+      //place indicator
+      placeIndicator(scene, this.playerName, this.playerPos, {
+        x: moveToPosX,
+        y: moveToPosY,
+      });
 
       //rotate player towards the clicked position
-      object = scene.getObjectByName(this.playerName, true);
+      let object = scene.getObjectByName(this.playerName, true);
       object.lookAt(moveToPosX, 0, moveToPosY);
 
       //move player
@@ -312,13 +251,6 @@ export default defineComponent({
       );
     },
     handleKey(key) {
-      var object = scene.getObjectByName(this.playerName, true);
-      if (key.key == "q") {
-        object.rotation.y += 0.1;
-      }
-      if (key.key == "e") {
-        object.rotation.y -= 0.1;
-      }
       if (key.code == "Digit1") {
         this.activateHotbar(0);
       }
@@ -386,7 +318,6 @@ export default defineComponent({
 
     await initAssets(scene, camera, (progress) => {
       this.loadingProgress = progress;
-      console.log(this.loadingProgress);
     });
 
     //delay loading screen a bit
@@ -428,14 +359,6 @@ export default defineComponent({
   font-size: 5em;
   color: black;
   z-index: 1001;
-}
-.controlsMobile {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  button {
-    margin: 10px;
-  }
 }
 
 .hotbar {
