@@ -6,33 +6,28 @@ import { Mesh } from "three";
 
 export async function loadObject(scene, camera, objName, textureName, id) {
   const loader = new OBJLoader();
-  const textureLoader = new TextureLoader();
 
   return new Promise((resolve, reject) => {
     loader.load(
       "assets/models/" + objName,
-      (object) => {
-        const texture = textureLoader.load(
-          "assets/models/" + textureName,
-          () => {
-            const material = new MeshLambertMaterial({
-              map: texture,
-            });
+      async (object) => {
+        const texture = await loadTexture(textureName);
+        const material = new MeshLambertMaterial({
+          map: texture,
+        });
 
-            object.traverse((child) => {
-              if (child instanceof Mesh) child.material = material;
-            });
-            object.name = id;
-            object.scale.set(0, 0, 0);
-            object.position.set(0, 0, 0);
-            //console.log(object.name + " added to the scene.");
+        object.traverse((child) => {
+          if (child instanceof Mesh) child.material = material;
+        });
+        object.name = id;
+        object.scale.set(0, 0, 0);
+        object.position.set(0, 0, 0);
+        //console.log(object.name + " added to the scene.");
 
-            // Add the mesh to your scene
-            scene.add(object);
-            camera.lookAt(object.position);
-            resolve();
-          }
-        );
+        // Add the mesh to your scene
+        scene.add(object);
+        camera.lookAt(object.position);
+        resolve();
       },
       // called when loading is in progresses
       function (xhr) {
@@ -44,5 +39,16 @@ export async function loadObject(scene, camera, objName, textureName, id) {
         console.error(error);
       }
     );
+  });
+}
+
+const modelsPath = "assets/models/";
+
+export function loadTexture(textureName) {
+  const textureLoader = new TextureLoader();
+  return new Promise((resolve, reject) => {
+    const texture = textureLoader.load(modelsPath + textureName, () => {
+      resolve(texture);
+    });
   });
 }

@@ -10,6 +10,11 @@ const assets = [
     name: "originalRubberDucky",
   },
   {
+    obj: "rubberDuck.obj",
+    texture: "havoc.bmp",
+    name: "havocDucky",
+  },
+  {
     obj: "cube.obj",
     texture: "grass.bmp",
     name: "ground",

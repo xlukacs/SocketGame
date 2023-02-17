@@ -1,3 +1,7 @@
+import { loadTexture } from "./util";
+import { MeshLambertMaterial } from "three/src/materials/MeshLambertMaterial";
+import { Mesh } from "three";
+
 export function setupDrones(scene, playerName) {
   //spawn drones
   var object = scene.getObjectByName("originalRubberDucky", true);
@@ -155,4 +159,20 @@ export function turtleFormation(scene) {
   object.position.set(0, 0, 0);
   object.position.x += 0.5;
   object.position.z -= 2;
+}
+
+export async function changeDroneDesign(scene, droneName, toType, toSkin) {
+  //select drone
+  var drone = scene.getObjectByName(droneName, true);
+
+  //change drone type and its stats TODO
+
+  //change drone skin/texture
+  const texture = await loadTexture(toSkin);
+  const material = new MeshLambertMaterial({
+    map: texture,
+  });
+  drone.traverse((child) => {
+    if (child instanceof Mesh) child.material = material;
+  });
 }

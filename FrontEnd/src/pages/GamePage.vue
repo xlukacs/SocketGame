@@ -171,7 +171,7 @@ export default defineComponent({
       var distance = begPoint.distanceTo(endPoint);
 
       var steps = Math.ceil(distance / 1);
-      var time = 30;
+      var time = 15;
 
       //console.log("From", from, "\nTO", to);
 
