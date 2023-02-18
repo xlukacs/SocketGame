@@ -227,7 +227,7 @@ export default defineComponent({
               {
                 itemName: "LF-4",
                 randomID: generateRandomID(16),
-                bg: "pic/items/lasers/lf4.png",
+                bg: "assets/pic/items/lasers/lf4.png",
                 type: "laser",
               },
             ],
@@ -235,13 +235,13 @@ export default defineComponent({
               {
                 itemName: "BO3",
                 randomID: generateRandomID(16),
-                bg: "pic/items/shields/bo3.png",
+                bg: "assets/pic/items/shields/bo3.png",
                 type: "shield",
               },
               {
                 itemName: "BO3",
                 randomID: generateRandomID(16),
-                bg: "pic/items/shields/bo3.png",
+                bg: "assets/pic/items/shields/bo3.png",
                 type: "shield",
               },
             ],
@@ -253,19 +253,19 @@ export default defineComponent({
         {
           itemName: "LF-4",
           randomID: generateRandomID(16),
-          bg: "pic/items/lasers/lf4.png",
+          bg: "assets/pic/items/lasers/lf4.png",
           type: "laser",
         },
         {
           itemName: "LF-4",
           randomID: generateRandomID(16),
-          bg: "pic/items/lasers/lf4.png",
+          bg: "assets/pic/items/lasers/lf4.png",
           type: "laser",
         },
         {
           itemName: "BO3",
           randomID: generateRandomID(16),
-          bg: "pic/items/shields/bo3.png",
+          bg: "assets/pic/items/shields/bo3.png",
           type: "shield",
         },
       ],
@@ -399,13 +399,16 @@ section {
   grid-template-areas: "name name name" "pic items design";
   grid-template-rows: 30px 70px;
   grid-template-columns: 70px auto auto;
+  gap: 5px;
   h6 {
     grid-area: name;
     padding: 0px;
     margin: 0px;
+    color: black;
   }
   .droneImg {
     grid-area: pic;
+    border-radius: 10px;
   }
   .droneItems {
     grid-area: items;

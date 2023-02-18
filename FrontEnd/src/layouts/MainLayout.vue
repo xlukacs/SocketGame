@@ -21,7 +21,7 @@
           <div class="buttons">
             <q-btn color="primary" dense icon="check" @click="onClick" />
             <q-btn color="primary" dense icon="check" @click="onClick" />
-            <q-btn color="primary" dense icon="check" @click="onClick" />
+            <q-btn color="primary" dense icon="logout" @click="logout" />
           </div>
         </div>
       </div>
@@ -81,6 +81,11 @@ export default defineComponent({
 
   setup() {
     return {};
+  },
+  methods: {
+    logout() {
+      console.log("LOGOUT REQUEST");
+    },
   },
 });
 </script>
