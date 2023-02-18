@@ -1,3 +1,5 @@
+import { generateRandomID } from "src/assets/scripts/util";
+
 export default function () {
   return {
     drones: [
@@ -7,20 +9,20 @@ export default function () {
         items: [
           {
             itemName: "LF-4",
-            randomID: "HN7LKGLUAPE",
+            randomID: generateRandomID(16),
             bg: "pic/items/lasers/lf4.png",
             type: "laser",
           },
           {
             itemName: "LF-4",
-            randomID: "HN7LKGLUATP",
+            randomID: generateRandomID(16),
             bg: "pic/items/lasers/lf4.png",
             type: "laser",
           },
         ],
         design: {
           name: "havoc",
-          randomID: "COHESIVE",
+          randomID: generateRandomID(16),
           bg: "pic/items/drones/havoc.png",
           type: "droneDesign",
           skin: "havoc.bmp",

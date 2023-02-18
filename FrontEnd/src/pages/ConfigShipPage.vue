@@ -193,6 +193,7 @@
 </template>
 
 <script>
+import { generateRandomID } from "src/assets/scripts/util";
 import { defineComponent, ref } from "vue";
 
 import { mapActions, mapGetters } from "vuex";
@@ -225,7 +226,7 @@ export default defineComponent({
             lasers: [
               {
                 itemName: "LF-4",
-                randomID: "HN7LKGLUAP",
+                randomID: generateRandomID(16),
                 bg: "pic/items/lasers/lf4.png",
                 type: "laser",
               },
@@ -233,13 +234,13 @@ export default defineComponent({
             shields: [
               {
                 itemName: "BO3",
-                randomID: "CEHNOF7EZE",
+                randomID: generateRandomID(16),
                 bg: "pic/items/shields/bo3.png",
                 type: "shield",
               },
               {
                 itemName: "BO3",
-                randomID: "CEHNOF7EZE2",
+                randomID: generateRandomID(16),
                 bg: "pic/items/shields/bo3.png",
                 type: "shield",
               },
@@ -251,19 +252,19 @@ export default defineComponent({
       inventory: [
         {
           itemName: "LF-4",
-          randomID: "DOODLEYDOO",
+          randomID: generateRandomID(16),
           bg: "pic/items/lasers/lf4.png",
           type: "laser",
         },
         {
           itemName: "LF-4",
-          randomID: "BOOMBASTIC",
+          randomID: generateRandomID(16),
           bg: "pic/items/lasers/lf4.png",
           type: "laser",
         },
         {
           itemName: "BO3",
-          randomID: "NOTSORANDOM",
+          randomID: generateRandomID(16),
           bg: "pic/items/shields/bo3.png",
           type: "shield",
         },
@@ -284,8 +285,18 @@ export default defineComponent({
 
       var elem = document.getElementById(data);
       //inventory
-      if (slotType == elem.getAttribute("type") || slotType == "general")
+      if (slotType == elem.getAttribute("type") || slotType == "general") {
         ev.target.appendChild(document.getElementById(data));
+        //remove drone design if it came from a drone
+        //TODO FIX
+        // if (slotType == general && elem.getAttribute("type") == "droneDesign") {
+        //   let fromDrone = document
+        //     .getElementById(data)
+        //     .parentElement.getAttribute("drone");
+
+        //   this.removeDroneDesign(fromDrone.substring(5));
+        // }
+      }
 
       //drone
       if (

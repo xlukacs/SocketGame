@@ -11,4 +11,5 @@ LOGIC:
 - In the game fix the dumb way of waiting with setInterval to be able to acces the objects in the scene
 - isActive status of hotbar items visual missing
 - Change drone type and its stats - update it in the UI over the player
-- Load last used formation for drones
+- Load last used formation for
+- Fix dronedesign placement and sync with VUEX store (design coming from a drone to inventory, from inventory to inventory, etc...)
