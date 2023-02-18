@@ -1,5 +1,11 @@
 export default {
-  // setNthDron: (state) => {
-  //   return state.drones[nthDrone];
-  // },
+  removeDroneDesign({ commit }, nthDrone) {
+    commit("REMOVE_DESIGN", nthDrone);
+  },
+  addDroneDesign({ commit }, params) {
+    commit("SET_DRONE_DESIGN", {
+      nthDrone: params.nthDrone,
+      design: params.designData.name,
+    });
+  },
 };

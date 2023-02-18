@@ -85,7 +85,7 @@
           >
             <div class="column shipConfigDropZones">
               <section
-                v-for="drone in shipConfigs[0].drones"
+                v-for="(drone, index) in dronesData"
                 :key="drone.id"
                 class="drone"
               >
@@ -133,6 +133,7 @@
                     class="slot"
                     @drop="drop($event, 'droneDesignSlot')"
                     @dragover="allowDrop"
+                    :drone="'drone' + index"
                   >
                     <div
                       v-if="drone.design.name"
@@ -194,7 +195,7 @@
 <script>
 import { defineComponent, ref } from "vue";
 
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default defineComponent({
   name: "ConfigShipPage",
@@ -210,6 +211,9 @@ export default defineComponent({
   },
   data() {
     return {
+      dragData: {
+        fromElement: null,
+      },
       shipValues: {
         lasers: 10,
         shields: 8,
@@ -241,7 +245,7 @@ export default defineComponent({
               },
             ],
           },
-          drones: dronesData,
+          //drones: dronesData,
         },
       ],
       inventory: [
@@ -267,6 +271,7 @@ export default defineComponent({
     };
   },
   methods: {
+    ...mapActions("drones", ["removeDroneDesign", "addDroneDesign"]),
     allowDrop(ev) {
       ev.preventDefault();
     },
@@ -294,8 +299,22 @@ export default defineComponent({
         "droneDesign" == elem.getAttribute("type") &&
         slotType == "droneDesignSlot"
       ) {
+        let fromDrone = document
+          .getElementById(data)
+          .parentElement.getAttribute("drone");
+        let toDrone = ev.target.getAttribute("drone");
+
+        //move the drone in the UI
         ev.target.appendChild(document.getElementById(data));
-        //UPDATE drone design here
+        //UPDATE drone design in the store
+        let nthDrone = fromDrone.substring(5);
+
+        let tempDroneData = this.$store.state.drones.drones[nthDrone].design;
+        this.removeDroneDesign(nthDrone);
+        this.addDroneDesign({
+          nthDrone: toDrone.substring(5),
+          designData: tempDroneData,
+        });
       }
     },
   },

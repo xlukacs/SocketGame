@@ -1,5 +1,5 @@
 export default {
-  SET_DRONE_DESIGN(state, nthDrone, design) {
+  SET_DRONE_DESIGN(state, { nthDrone, design }) {
     if (design == "havoc") {
       state.drones[nthDrone].design = {
         name: "havoc",
@@ -9,5 +9,8 @@ export default {
         skin: "havoc.bmp",
       };
     }
+  },
+  REMOVE_DESIGN(state, nthDrone) {
+    state.drones[nthDrone].design = {};
   },
 };
