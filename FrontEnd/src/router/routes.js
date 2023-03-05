@@ -15,6 +15,14 @@ const routes = [
     path: "/gameClient",
     component: () => import("pages/GamePage.vue"),
   },
+  {
+    path: "/login",
+    component: () => import("pages/auth/LoginPage.vue"),
+  },
+  {
+    path: "/register",
+    component: () => import("pages/auth/RegisterPage.vue"),
+  },
 
   // Always leave this as last one,
   // but you can also remove it
