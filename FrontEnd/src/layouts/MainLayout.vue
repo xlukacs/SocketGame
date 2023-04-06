@@ -51,7 +51,7 @@
           />
         </div>
         <div class="rightPart">
-          <q-btn color="primary" label="Shop" @click="onClick" />
+          <q-btn color="primary" label="Shop" @click="$router.push('/shop')" />
           <q-btn color="primary" label="Auction" @click="onClick" />
           <q-btn color="primary" label="Galaxygates" @click="onClick" />
         </div>
