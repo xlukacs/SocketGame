@@ -7,7 +7,7 @@
         "currency": "uridium"
       },
       "desc": "A powerfull ship",
-      "pic": "goliath.png",
+      "pic": "ships/pic/goliath.png",
       "itemID": "ship-goliath",
       "abilities": []
     },
@@ -18,7 +18,7 @@
         "currency": "uridium"
       },
       "desc": "A powerfull ship with extra damage boost",
-      "pic": "goliathEnforcer.png",
+      "pic": "ships/pic/goliathEnforcer.png",
       "itemID": "ship-goliath-enforcer",
       "abilities": [
         {
@@ -35,7 +35,7 @@
         "currency": "credits"
       },
       "desc": "A powerfull ship with extra shield multiplier",
-      "pic": "goliathBastion.png",
+      "pic": "ships/pic/goliathBastion.png",
       "itemID": "ship-goliath-bastion",
       "abilities": [
         {

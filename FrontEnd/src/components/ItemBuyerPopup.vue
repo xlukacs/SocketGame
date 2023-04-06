@@ -1,17 +1,17 @@
 <template>
-  <div class="itemBuyerPopup" v-if="isBuyerPopupOpen">
+  <div class="itemBuyerPopup" v-if="open">
     <div class="bg" @click="closePopup"></div>
     <div class="content">
       <q-btn color="negative" icon="close" @click="closePopup" />
       <q-img
-        src="https://placeimg.com/500/300/nature"
+        :src="bgPic"
         spinner-color="primary"
         spinner-size="82px"
         width="300px"
         height="300px"
       />
-      <p>ItemName</p>
-      <span>Desc</span>
+      <p>{{ itemData.name }}</p>
+      <span>{{ itemData.desc }}</span>
       <div class="controls">
         <input type="number" name="itemAmount" min="1" value="1" />
         <q-btn color="primary" label="BUY" @click="buyItem()" />
@@ -21,30 +21,49 @@
 </template>
 
 <script>
+import { getShopItem } from "@/../../src/assets/scripts/managers/itemManager.js";
+
 export default {
   name: "ItemBuyerPopup",
   data() {
     return {
-      isBuyerPopupOpen: false,
+      itemData: {
+        name: "Loading...",
+        desc: "Loading...",
+        price: {
+          amount: 0,
+          currency: "Loading...",
+        },
+        pic: "Loading...",
+      },
     };
   },
   watch: {
     item(newValue, oldValue) {
-      this.isBuyerPopupOpen = this.item > 0 ? true : false;
+      this.loadItemData(this.item);
+
+      console.log("PROP CHANGE", this.itemData);
+    },
+  },
+  computed: {
+    bgPic() {
+      console.log("./assets/items/" + this.itemData.pic);
+      return "./assets/items/" + this.itemData.pic;
     },
   },
   mounted() {},
   props: {
-    item: Number,
+    item: String,
+    open: Boolean,
   },
   methods: {
+    loadItemData: async function (itemID) {
+      this.itemData = await getShopItem(itemID);
+    },
     buyItem: function () {
-      console.log(item);
+      console.log(item + "");
     },
     closePopup: function () {
-      this.itemID = 0;
-      this.isBuyerPopupOpen = false;
-
       this.$emit("close-buyer-popup");
     },
   },

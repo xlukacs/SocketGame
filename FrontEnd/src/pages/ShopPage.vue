@@ -21,56 +21,44 @@
           <q-tab-panel name="ships">
             <div class="shop-items flex row">
               <ShopItem
-                v-for="index in 10"
-                :key="index"
-                :id="index"
+                :id="item.itemID"
                 @open-buyer-popup="openItem"
+                v-for="item in items.ships"
+                :key="item.id"
               />
             </div>
           </q-tab-panel>
 
           <q-tab-panel name="lasers">
-            <div class="text-h4 q-mb-md">Alarms</div>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-              praesentium cumque magnam odio iure quidem, quod illum numquam
-              possimus obcaecati commodi minima assumenda consectetur culpa fuga
-              nulla ullam. In, libero.
-            </p>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-              praesentium cumque magnam odio iure quidem, quod illum numquam
-              possimus obcaecati commodi minima assumenda consectetur culpa fuga
-              nulla ullam. In, libero.
-            </p>
+            <div class="shop-items flex row">
+              <ShopItem
+                :id="item.itemID"
+                @open-buyer-popup="openItem"
+                v-for="item in items.lasers"
+                :key="item.id"
+              />
+            </div>
           </q-tab-panel>
 
           <q-tab-panel name="generators">
-            <div class="text-h4 q-mb-md">Movies</div>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-              praesentium cumque magnam odio iure quidem, quod illum numquam
-              possimus obcaecati commodi minima assumenda consectetur culpa fuga
-              nulla ullam. In, libero.
-            </p>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-              praesentium cumque magnam odio iure quidem, quod illum numquam
-              possimus obcaecati commodi minima assumenda consectetur culpa fuga
-              nulla ullam. In, libero.
-            </p>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-              praesentium cumque magnam odio iure quidem, quod illum numquam
-              possimus obcaecati commodi minima assumenda consectetur culpa fuga
-              nulla ullam. In, libero.
-            </p>
+            <div class="shop-items flex row">
+              <ShopItem
+                :id="item.itemID"
+                @open-buyer-popup="openItem"
+                v-for="item in items.generators"
+                :key="item.id"
+              />
+            </div>
           </q-tab-panel>
         </q-tab-panels>
       </template>
     </q-splitter>
 
-    <ItemBuyerPopup :item="itemToBuyID" @close-buyer-popup="closeItemPopup" />
+    <ItemBuyerPopup
+      :open="isBuyerPopupOpen"
+      :item="itemToBuyID"
+      @close-buyer-popup="closeItemPopup"
+    />
   </q-page>
 </template>
 
@@ -78,6 +66,11 @@
 import { defineComponent, ref } from "vue";
 import ItemBuyerPopup from "components/ItemBuyerPopup.vue";
 import ShopItem from "components/ShopItem.vue";
+import {
+  loadLasersData,
+  loadShipsData,
+  loadGeneratorsData,
+} from "@/../../src/assets/scripts/managers/itemManager.js";
 
 export default defineComponent({
   name: "ShopPage",
@@ -90,16 +83,32 @@ export default defineComponent({
   },
   data() {
     return {
-      itemToBuyID: 0,
+      itemToBuyID: "",
+      isBuyerPopupOpen: false,
+      items: {
+        ships: [],
+        lasers: [],
+        generators: [],
+      },
     };
   },
+  computed: {},
+  mounted() {
+    this.loadShopData();
+  },
   methods: {
+    loadShopData: async function () {
+      this.items.ships = await loadShipsData();
+      this.items.lasers = await loadLasersData();
+      this.items.generators = await loadGeneratorsData();
+    },
     openItem: function (id) {
-      console.log("Emit reeived", id);
+      console.log("Opening", id);
       this.itemToBuyID = id;
+      this.isBuyerPopupOpen = true;
     },
     closeItemPopup: function () {
-      this.itemToBuyID = 0;
+      this.isBuyerPopupOpen = false;
     },
   },
 });

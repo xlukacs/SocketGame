@@ -10,6 +10,8 @@
 
 const ESLintPlugin = require("eslint-webpack-plugin");
 
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+
 const { configure } = require("quasar/wrappers");
 
 module.exports = configure(function (ctx) {
@@ -70,7 +72,28 @@ module.exports = configure(function (ctx) {
         chain
           .plugin("eslint-webpack-plugin")
           .use(ESLintPlugin, [{ extensions: ["js", "vue"] }]);
+        // .use(
+        //   new CopyWebpackPlugin({
+        //     patterns: [
+        //       {
+        //         from: "src/assets/items",
+        //         to: "public/assets/items",
+        //       },
+        //     ],
+        //     options: {
+        //       concurrency: 100,
+        //     },
+        //   })
+        // );
       },
+
+      // extendWebpack(cfg) {
+      //   cfg.plugins.push(
+      //     new CopyWebpackPlugin({
+      //       patterns: [{ from: "src/assets/items", to: "assets/items" }],
+      //     })
+      //   );
+      // },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-devServer

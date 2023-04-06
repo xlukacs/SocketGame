@@ -2,9 +2,11 @@
   <div class="shop-item" @click="openItem">
     <div
       class="shop-item-image"
-      style="background-image: url('https://placeimg.com/500/300/nature')"
+      :style="{
+        backgroundImage: 'url(./assets/items/' + itemData.pic + ')',
+      }"
     >
-      <p>Ship</p>
+      <p>{{ itemData.name }}</p>
     </div>
   </div>
 </template>
@@ -29,17 +31,18 @@ export default {
   },
   watch: {},
   mounted() {
-    loadItemData(id);
+    this.loadItemData(this.id);
   },
   props: {
     id: String,
   },
   methods: {
     openItem: function () {
-      console.log("emitting", this.id);
       this.$emit("openBuyerPopup", this.id);
     },
-    loadItemData: function (itemID) {},
+    loadItemData: async function (itemID) {
+      this.itemData = await getShopItem(itemID);
+    },
   },
 };
 </script>

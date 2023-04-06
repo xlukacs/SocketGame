@@ -1,0 +1,15 @@
+{
+  "lasers": [
+    {
+      "name": "LF-3",
+      "price": {
+        "amount": 1000,
+        "currency": "uridium"
+      },
+      "desc": "A great lasergun",
+      "pic": "lasers/pic/lf3.png",
+      "itemID": "lasers-lf3",
+      "abilities": []
+    }
+  ]
+}

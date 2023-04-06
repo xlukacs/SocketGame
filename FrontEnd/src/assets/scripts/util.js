@@ -65,3 +65,8 @@ export function generateRandomID(length) {
   }
   return result;
 }
+
+export function log(message) {
+  var canLog = true;
+  if (canLog) console.log(message);
+}

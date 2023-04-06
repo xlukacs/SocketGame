@@ -1,0 +1,15 @@
+{
+  "generators": [
+    {
+      "name": "SHD-BO3",
+      "price": {
+        "amount": 12000,
+        "currency": "credits"
+      },
+      "desc": "A great shield generator",
+      "pic": "generators/pic/shdbo3.png",
+      "itemID": "generators-shield-shdbo3",
+      "abilities": []
+    }
+  ]
+}
