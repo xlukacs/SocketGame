@@ -1,0 +1,17 @@
+{
+  "appenders": {
+    "out": {
+      "type": "console"
+    },
+    "file": {
+      "type": "file",
+      "filename": "logs/app.log"
+    }
+  },
+  "categories": {
+    "default": {
+      "appenders": ["out"],
+      "level": "info"
+    }
+  }
+}

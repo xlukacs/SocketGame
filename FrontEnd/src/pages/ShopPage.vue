@@ -20,21 +20,12 @@
         >
           <q-tab-panel name="ships">
             <div class="shop-items flex row">
-              <div
-                class="shop-item"
+              <ShopItem
                 v-for="index in 10"
                 :key="index"
-                @click="openItem(index)"
-              >
-                <div
-                  class="shop-item-image"
-                  style="
-                    background-image: url('https://placeimg.com/500/300/nature');
-                  "
-                >
-                  <p>Ship</p>
-                </div>
-              </div>
+                :id="index"
+                @open-buyer-popup="openItem"
+              />
             </div>
           </q-tab-panel>
 
@@ -86,10 +77,11 @@
 <script>
 import { defineComponent, ref } from "vue";
 import ItemBuyerPopup from "components/ItemBuyerPopup.vue";
+import ShopItem from "components/ShopItem.vue";
 
 export default defineComponent({
   name: "ShopPage",
-  components: { ItemBuyerPopup },
+  components: { ItemBuyerPopup, ShopItem },
   setup() {
     return {
       activeShopTab: ref("ships"),
@@ -103,6 +95,7 @@ export default defineComponent({
   },
   methods: {
     openItem: function (id) {
+      console.log("Emit reeived", id);
       this.itemToBuyID = id;
     },
     closeItemPopup: function () {
@@ -114,32 +107,5 @@ export default defineComponent({
 <style lang="scss" scoped>
 .shop-items {
   gap: 5px;
-}
-.shop-item {
-  cursor: pointer;
-  width: 100px;
-  height: 125px;
-  border-radius: 5px;
-  overflow: hidden;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
-  .shop-item-image {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: flex-end;
-    p {
-      text-align: center;
-      position: relative;
-
-      background-color: lightgray;
-      margin: 0px;
-      width: 100%;
-      height: 40px;
-      line-height: 40px;
-      font-weight: bold;
-    }
-  }
 }
 </style>

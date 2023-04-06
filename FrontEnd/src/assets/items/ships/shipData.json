@@ -1,0 +1,49 @@
+{
+  "ships": [
+    {
+      "name": "Goliath",
+      "price": {
+        "amount": 10000,
+        "currency": "uridium"
+      },
+      "desc": "A powerfull ship",
+      "pic": "goliath.png",
+      "itemID": "ship-goliath",
+      "abilities": []
+    },
+    {
+      "name": "Goliath Enforcer",
+      "price": {
+        "amount": 15000,
+        "currency": "uridium"
+      },
+      "desc": "A powerfull ship with extra damage boost",
+      "pic": "goliathEnforcer.png",
+      "itemID": "ship-goliath-enforcer",
+      "abilities": [
+        {
+          "name": "Enrage",
+          "description": "Deal more damage",
+          "pic": "enrage.png"
+        }
+      ]
+    },
+    {
+      "name": "Goliath Bastion",
+      "price": {
+        "amount": 150000,
+        "currency": "credits"
+      },
+      "desc": "A powerfull ship with extra shield multiplier",
+      "pic": "goliathBastion.png",
+      "itemID": "ship-goliath-bastion",
+      "abilities": [
+        {
+          "name": "Enrage",
+          "description": "Deal more damage",
+          "pic": "enrage.png"
+        }
+      ]
+    }
+  ]
+}
