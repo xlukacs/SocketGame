@@ -33,9 +33,7 @@ export default {
       this.isBuyerPopupOpen = this.item > 0 ? true : false;
     },
   },
-  mounted() {
-    console.log("COMP" + this.item);
-  },
+  mounted() {},
   props: {
     item: Number,
   },
@@ -47,7 +45,7 @@ export default {
       this.itemID = 0;
       this.isBuyerPopupOpen = false;
 
-      console.log("REM" + this.itemID);
+      this.$emit("close-buyer-popup");
     },
   },
 };

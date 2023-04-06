@@ -79,7 +79,7 @@
       </template>
     </q-splitter>
 
-    <ItemBuyerPopup :item="itemToBuyID" />
+    <ItemBuyerPopup :item="itemToBuyID" @close-buyer-popup="closeItemPopup" />
   </q-page>
 </template>
 
@@ -104,7 +104,9 @@ export default defineComponent({
   methods: {
     openItem: function (id) {
       this.itemToBuyID = id;
-      console.log(this.itemToBuyID);
+    },
+    closeItemPopup: function () {
+      this.itemToBuyID = 0;
     },
   },
 });

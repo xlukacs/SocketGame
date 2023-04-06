@@ -13,4 +13,5 @@ LOGIC:
 - Change drone type and its stats - update it in the UI over the player
 - Load last used formation for
 - Fix dronedesign placement and sync with VUEX store (design coming from a drone to inventory, from inventory to inventory, etc...)
-- Cant open same item in shop twice, since the popup doesn't register the itemID change from f.e. 5->5
+
+* Cant open same item in shop twice, since the popup doesn't register the itemID change from f.e. 5->5
