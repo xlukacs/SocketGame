@@ -1,0 +1,5 @@
+npx knex migrate:make user
+npx knex migrate:latest
+
+npx knex seed:make users
+npx knex seed:run
