@@ -4,12 +4,12 @@ const jwt = require('jsonwebtoken')
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-    console.log("Got a request in /API/auth/register", req.body.username, req.body.password);
+    console.log("Got a request in /API/auth/register", req.body.username, req.body.password, req.body.email);
     var query = "INSERT INTO public.users( " +
-                "username, password) " +
-                "VALUES ($1, $2);"
+                "username, password, email) " +
+                "VALUES ($1, $2, $3);"
 
-    const registerResult = await pool.query(query, [req.body.username, req.body.password])
+    const registerResult = await pool.query(query, [req.body.username, req.body.password, req.body.email])
 
     res.status(200).json({ registerResult: registerResult })
 })

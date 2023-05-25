@@ -10,7 +10,7 @@ const app = express();
 
 // var allowlist = ['http://localhost:8080', 'http://http://192.168.1.102:8080','http://localhost:8081']
 var corsOptions = {
-    origin: 'http://localhost:8081',
+    origin: 'http://localhost:8080',
     optionsSuccessStatus: 200 
 }
   
@@ -19,7 +19,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "http://localhost:8081");  //allowlist parser TODO
+    res.header("Access-Control-Allow-Origin", "http://localhost:8080");  //allowlist parser TODO
     res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS"); 
     res.header("Access-Control-Allow-Headers", "X-Auth-Token, Origin, X-Requested-With, Content-Type, Accept, Authorization");
     next();
@@ -34,17 +34,14 @@ app.use(function(req, res, next) {
 
 
 const authRouter = require('./API/auth')
-// const chatsRouter = require('./API/chats')
-// const friendsRouter = require('./API/friends')
-// const postsRouter = require('./API/posts')
-// const usersRouter = require('./API/users')
-
+const usersRouter = require('./API/users')
+const itemsRouter = require('./API/items')
+const shopRouter = require('./API/shop')
 //==============API CALLS=================
 app.use('/API/auth', authRouter)
-// app.use('/API/chats', chatsRouter)
-// app.use('/API/friends', friendsRouter)
-// app.use('/API/posts', postsRouter)
-// app.use('/API/users', usersRouter)
+app.use('/API/users', usersRouter)
+app.use('/API/items', itemsRouter)
+app.use('/API/shop', shopRouter)
 
 //==============EXPERIMENTAL CALLS=================
 app.all('/', (req,res) => {

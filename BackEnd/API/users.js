@@ -9,12 +9,12 @@ router.get('/getData', authenticateToken, async (req, res) => {
     var query = 'SELECT username FROM users WHERE id=$1';
     const basicInfoResult = await pool.query(query, [req.query.id]);
     
-    var query = 'SELECT * FROM user_actions WHERE id=$1 ORDER BY id DESC LIMIT 1';
-    const statusResult = await pool.query(query, [req.query.id]);
+    // var query = 'SELECT * FROM user_actions WHERE id=$1 ORDER BY id DESC LIMIT 1';
+    // const statusResult = await pool.query(query, [req.query.id]);
 
-    var statusParsedRes = statusResult.rowCount > 0 ? statusResult.rows[0].value : 'offline';
+    // var statusParsedRes = statusResult.rowCount > 0 ? statusResult.rows[0].value : 'offline';
 
-    res.status(200).json({ basic_info: basicInfoResult.rows, availability: statusParsedRes });
+    res.status(200).json({ basic_info: basicInfoResult.rows }); //, availability: statusParsedRes
 })
 
 router.post('/sendFriendRequest', authenticateToken, async (req, res) => {
