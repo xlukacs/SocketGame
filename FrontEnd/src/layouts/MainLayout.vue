@@ -1,10 +1,10 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header elevated class="bg-primary text-white" height-hint="98">
+    <q-header elevated class="no-bg text-white" height-hint="98">
       <div class="top">
         <div class="serverInfo">
-          <div class="server">GE1</div>
-          <div class="sid">lvl 22</div>
+          <div class="server font-bold">GE1</div>
+          <div class="sid font-bold">lvl 22</div>
           <div class="buttons">
             <q-btn
               color="primary"
@@ -12,12 +12,16 @@
               icon="home"
               @click="$router.push('/')"
             />
-            <q-btn color="primary" dense icon="check" @click="onClick" />
+            <q-btn color="primary" dense icon="public" @click="onClick" />
           </div>
         </div>
         <div class="accountInfo">
-          <div class="xp">1.500 k</div>
-          <div class="ep">1.800 m</div>
+          <div class="xp">
+            <InlineIconItem text="800k" icon="xp.png" />
+          </div>
+          <div class="honors">
+            <InlineIconItem text="1.800m" icon="honor.png" />
+          </div>
           <div class="buttons">
             <q-btn color="primary" dense icon="check" @click="onClick" />
             <q-btn color="primary" dense icon="check" @click="onClick" />
@@ -37,15 +41,16 @@
         </div>
         <div class="centralPart">
           <q-img
-            src="https://placeimg.com/500/300/nature"
+            :src="require('/public/assets/web_assets/logo.png')"
             :ratio="16 / 9"
             spinner-color="primary"
             spinner-size="82px"
             height="150px"
+            fit="scale-down"
           />
           <!-- target="_blank"  href="/gameClient" -->
           <q-btn
-            color="primary"
+            color="positive"
             label="START"
             @click="$router.push('/gameClient')"
           />
@@ -58,9 +63,15 @@
       </div>
       <div class="bot">
         <div class="accountCurrencies">
-          <div class="kredit">800k</div>
-          <div class="uridium">4500m</div>
-          <div class="trubium">70</div>
+          <div class="kredit">
+            <InlineIconItem text="800k" icon="credits.png" />
+          </div>
+          <div class="uridium">
+            <InlineIconItem text="45m" icon="uridium.png" />
+          </div>
+          <div class="trubium">
+            <InlineIconItem text="70" icon="trubium.png" />
+          </div>
         </div>
       </div>
     </q-header>
@@ -74,10 +85,12 @@
 <script>
 import { defineComponent } from "vue";
 
+import InlineIconItem from "../components/InlineIconItem.vue";
+
 export default defineComponent({
   name: "MainLayout",
 
-  components: {},
+  components: { InlineIconItem },
 
   setup() {
     return {};
@@ -85,6 +98,7 @@ export default defineComponent({
   methods: {
     logout() {
       console.log("LOGOUT REQUEST");
+      this.$router.push("/login");
     },
   },
 });
@@ -95,10 +109,11 @@ export default defineComponent({
   width: 100%;
   height: 25px;
   line-height: 25px;
-  background-color: red;
+  background: rgb(17, 20, 23);
   display: flex;
   flex-direction: row;
   //mutual props
+  // color: rgb(167, 175, 190);
   .accountInfo,
   .serverInfo {
     width: 50%;
@@ -109,9 +124,9 @@ export default defineComponent({
     padding-left: 50px;
     gap: 10%;
     .buttons {
-      position: relative;
-      top: 25px;
-      left: -200px;
+      position: fixed;
+      top: 30px;
+      left: 50px;
       button {
         margin-right: 10px;
       }
@@ -122,9 +137,9 @@ export default defineComponent({
     padding-right: 50px;
     gap: 10%;
     .buttons {
-      position: relative;
-      top: 25px;
-      right: -200px;
+      position: fixed;
+      top: 30px;
+      right: 50px;
       button {
         margin-right: 10px;
       }
@@ -134,7 +149,7 @@ export default defineComponent({
 .mid {
   height: 195px;
   width: 100%;
-  background-color: blue;
+  background: rgb(26, 29, 35);
   display: flex;
   flex-direction: row;
   //mutual props
@@ -194,20 +209,21 @@ export default defineComponent({
   width: 100%;
   height: 25px;
   line-height: 25px;
+  background: rgb(39, 44, 53);
   .accountCurrencies {
-    width: 300px;
-    float: right;
+    // width: 300px;
+    // float: right;
+    height: 25px;
     margin-right: 100px;
     display: flex;
     flex-direction: row;
+    justify-content: flex-end;
     div {
-      width: 33.33%;
       text-align: center;
       margin-right: 10px;
-      border: 2px solid black;
-      border-top: 0px;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
+      padding-left: 10px;
+      padding-right: 10px;
+      background: rgb(63, 69, 80);
     }
   }
 }

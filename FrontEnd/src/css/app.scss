@@ -2,3 +2,15 @@
 .primary-separator {
   background: var(--q-primary) !important;
 }
+
+.no-bg {
+  background: none !important;
+}
+
+* {
+  box-sizing: border-box !important;
+}
+
+.font-bold {
+  font-weight: bold !important;
+}

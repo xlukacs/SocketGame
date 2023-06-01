@@ -1,8 +1,8 @@
 <template>
-  <q-page class="flex justify-center items-start q-pt-md">
+  <q-page class="flex mainWrapper justify-center items-start q-pt-md">
     <section class="accountAndServerDetails">
       <div class="accountDetails">
-        <h5>Account name</h5>
+        <h5>{{ user.name }}</h5>
         <q-img
           src="https://placeimg.com/500/300/nature"
           spinner-color="primary"
@@ -12,14 +12,15 @@
         />
         <div class="rankAndClanWrapper">
           <div class="rank">
+            <!-- + user.rank + '.png')" -->
             <q-img
-              src="https://placeimg.com/500/300/nature"
+              :src="require('/public/assets/web_assets/ranks/rank20.png')"
               :ratio="1 / 1"
               spinner-color="primary"
               spinner-size="82px"
               width="30px"
             />
-            <span>rankName</span>
+            <span>{{ user.rank }}</span>
           </div>
           <div class="clan">
             <q-img
@@ -29,7 +30,7 @@
               spinner-size="82px"
               width="30px"
             />
-            <span>clanName</span>
+            <span>{{ user.clan }}</span>
           </div>
         </div>
         <div class="buttons">
@@ -38,6 +39,7 @@
           <q-btn color="primary" label="Subscriptions" @click="onClick" />
         </div>
       </div>
+
       <div class="serverDetails">
         <ul class="playerTable">
           <li class="tableHead">
@@ -125,20 +127,20 @@
       >
         <q-carousel-slide
           name="first"
-          img-src="https://placeimg.com/500/300/nature"
+          :img-src="require('/public/assets/web_assets/events/event1.png')"
         >
           <div class="absolute-bottom custom-caption">
-            <div class="text-h2">First stop</div>
-            <div class="text-subtitle1">Mountains</div>
+            <div class="text-h2">Event1</div>
+            <div class="text-subtitle1">The corresponding description</div>
           </div>
         </q-carousel-slide>
         <q-carousel-slide
           name="second"
-          img-src="https://placeimg.com/500/300/nature"
+          :img-src="require('/public/assets/web_assets/events/event2.png')"
         >
           <div class="absolute-bottom custom-caption">
-            <div class="text-h2">Second stop</div>
-            <div class="text-subtitle1">parallax</div>
+            <div class="text-h2">Event2</div>
+            <div class="text-subtitle1">The description belonging here</div>
           </div>
         </q-carousel-slide>
 
@@ -154,11 +156,23 @@
 <script>
 import { defineComponent, ref } from "vue";
 
+import InlineIconItem from "../components/InlineIconItem.vue";
+
 export default defineComponent({
   name: "IndexPage",
+  // components: { InlineIconItem },
   setup() {
     return {
       newsSlide: ref("first"),
+    };
+  },
+  data() {
+    return {
+      user: {
+        name: "Madranter",
+        rank: "Rank",
+        clan: "clanName",
+      },
     };
   },
 });
@@ -169,14 +183,27 @@ section {
   width: 40%;
 }
 
+.mainWrapper {
+  background-image: url("/assets/web_assets/homePageBG.jpg");
+  background-position: center;
+  background-size: cover;
+}
+
+.q-page-container {
+  padding-top: 244px;
+}
+
 .accountAndServerDetails {
+  border-radius: 5px;
+  overflow: hidden;
   .accountDetails {
-    background-color: gray;
+    background: #1a1d23;
     padding: 20px;
     h5 {
       margin-top: 5px;
       margin-bottom: 5px;
       font-weight: bold;
+      color: white;
     }
     .rankAndClanWrapper {
       margin-top: 5px;
@@ -187,6 +214,7 @@ section {
       span {
         margin-left: 10px;
         font-weight: bold;
+        color: white;
       }
     }
     .buttons {
@@ -199,14 +227,17 @@ section {
     }
   }
   .serverDetails {
-    background-color: lightgray;
+    background: #272c35;
     /*padding: 20px; 
     padding-top: unset;*/
     margin-top: -20px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
     .playerTable {
       list-style-type: none;
       padding: 0px;
       li {
+        color: white;
         height: 25px;
         display: flex;
         flex-direction: row;
@@ -241,12 +272,13 @@ section {
 
   //TODO - create this section
   .noticeSection {
-    background-color: lightgray;
+    background: #272c35;
     margin-top: 20px;
     padding: 20px;
     border-radius: 5px;
     min-height: 200px;
     font-weight: bold;
+    color: white;
   }
 }
 
