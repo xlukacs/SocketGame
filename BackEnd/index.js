@@ -37,11 +37,13 @@ const authRouter = require('./API/auth')
 const usersRouter = require('./API/users')
 const itemsRouter = require('./API/items')
 const shopRouter = require('./API/shop')
+const rankRouter = require('./API/rank')
 //==============API CALLS=================
 app.use('/API/auth', authRouter)
 app.use('/API/users', usersRouter)
 app.use('/API/items', itemsRouter)
 app.use('/API/shop', shopRouter)
+app.use('/API/rank', rankRouter)
 
 //==============EXPERIMENTAL CALLS=================
 app.all('/', (req,res) => {
@@ -52,8 +54,24 @@ app.all('/', (req,res) => {
 
 
 //==============SOCKET HANDLING===============
-// const io = require('socket.io')(server, { cors: { origin: "http://localhost:8080" }}) //8081 PORT AS WELL =================================
-// app.io = io;
+const io = require('socket.io')(server, { cors: { origin: "http://localhost:8080" }}) //8081 PORT AS WELL =================================
+app.io = io;
+
+io.on('connection', (socket) => {
+    let maps = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6'];
+    let activeUsers = [];
+    console.log('User connected:' + socket.id)
+
+    socket.on('join_game_map', (data) => {
+        console.log('channel joining: ' + data.server + data.map)
+        if(activeUsers.indexOf(data.user_id) == -1){
+            activeUsers.push(data.user_id)
+            socket.join(data.map);
+        }else{
+            console.log("Allready in that channel.");
+        }
+    })
+})
 
 // io.on("connection", (socket) => {
 //     let userRooms = [];

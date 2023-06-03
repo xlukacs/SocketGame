@@ -14,24 +14,8 @@
       <h1>Sign in</h1>
     </div>
     <div class="upper">
-      <!-- <img
-        :src="require('/src/assets/pic/logos/logo_big.png')"
-        alt="The logo of the site"
-      /> -->
       <form>
-        <!-- <input
-          type="text"
-          placeholder="Username"
-          v-model="username"
-          autocomplete="current-username"
-        /> -->
         <q-input v-model="username" type="text" label="Username" />
-        <!-- <input
-          type="password"
-          placeholder="Password"
-          v-model="password"
-          autocomplete="current-password"
-        /> -->
         <q-input v-model="password" type="password" label="Password" />
         <div class="controls">
           <q-btn color="primary" label="Login" @click="handleSubmit" />

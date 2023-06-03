@@ -340,6 +340,12 @@ export default defineComponent({
       renderer.render(scene, camera);
     };
     animate();
+
+    this.$socket.emit("join_game_map", {
+      server: "GE1",
+      map: "1-1",
+      user_id: 1,
+    });
   },
 });
 </script>

@@ -3,8 +3,8 @@
     <q-header elevated class="no-bg text-white" height-hint="98">
       <div class="top">
         <div class="serverInfo">
-          <div class="server font-bold">GE1</div>
-          <div class="sid font-bold">lvl 22</div>
+          <div class="server font-bold">{{ serverInfo.server }}</div>
+          <div class="sid font-bold">{{ serverInfo.level }}</div>
           <div class="buttons">
             <q-btn
               color="primary"
@@ -17,10 +17,10 @@
         </div>
         <div class="accountInfo">
           <div class="xp">
-            <InlineIconItem text="800k" icon="xp.png" />
+            <InlineIconItem :text="accountInfo.xp" icon="xp.png" />
           </div>
           <div class="honors">
-            <InlineIconItem text="1.800m" icon="honor.png" />
+            <InlineIconItem :text="accountInfo.honors" icon="honor.png" />
           </div>
           <div class="buttons">
             <q-btn color="primary" dense icon="check" @click="onClick" />
@@ -64,13 +64,13 @@
       <div class="bot">
         <div class="accountCurrencies">
           <div class="kredit">
-            <InlineIconItem text="800k" icon="credits.png" />
+            <InlineIconItem :text="accountInfo.kredit" icon="credits.png" />
           </div>
           <div class="uridium">
-            <InlineIconItem text="45m" icon="uridium.png" />
+            <InlineIconItem :text="accountInfo.uridium" icon="uridium.png" />
           </div>
           <div class="trubium">
-            <InlineIconItem text="70" icon="trubium.png" />
+            <InlineIconItem :text="accountInfo.trubium" icon="trubium.png" />
           </div>
         </div>
       </div>
@@ -86,6 +86,7 @@
 import { defineComponent } from "vue";
 
 import InlineIconItem from "../components/InlineIconItem.vue";
+import { getKey } from "../assets/util/session";
 
 export default defineComponent({
   name: "MainLayout",
@@ -94,6 +95,40 @@ export default defineComponent({
 
   setup() {
     return {};
+  },
+  data() {
+    return {
+      accountInfo: {
+        xp: 800000,
+        honors: 1800000000,
+        kredit: 800000,
+        uridium: 45000000,
+        trubium: 70,
+      },
+      serverInfo: {
+        server: "GE1",
+        level: "lvl 22",
+      },
+    };
+  },
+  created() {
+    fetch("http://localhost:3000/API/users/getData", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getKey("token"),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.accountInfo.xp = data.user.xp;
+        this.accountInfo.honors = data.user.honors;
+        this.accountInfo.kredit = data.user.credits;
+        this.accountInfo.uridium = data.user.uridium;
+        this.accountInfo.trubium = data.user.trubium;
+        this.serverInfo.server = data.user.server;
+        this.serverInfo.level = data.user.level;
+      });
   },
   methods: {
     logout() {

@@ -48,59 +48,14 @@
             <span class="playerName">PlayerName</span>
             <span class="rankPoints">RankPoints</span>
           </li>
-          <li>
-            <span class="nthPlayer">1</span>
-            <span class="faction">VRU</span>
-            <span class="playerName">Madranter</span>
-            <span class="rankPoints">999 999</span>
-          </li>
-          <li>
-            <span class="nthPlayer">2</span>
-            <span class="faction">VRU</span>
-            <span class="playerName">Madranter</span>
-            <span class="rankPoints">999 999</span>
-          </li>
-          <li>
-            <span class="nthPlayer">3</span>
-            <span class="faction">VRU</span>
-            <span class="playerName">Madranter</span>
-            <span class="rankPoints">999 999</span>
-          </li>
-          <li>
-            <span class="nthPlayer">4</span>
-            <span class="faction">VRU</span>
-            <span class="playerName">Madranter</span>
-            <span class="rankPoints">999 999</span>
-          </li>
-          <li>
-            <span class="nthPlayer">5</span>
-            <span class="faction">VRU</span>
-            <span class="playerName">Madranter</span>
-            <span class="rankPoints">999 999</span>
-          </li>
-          <li>
-            <span class="nthPlayer">6</span>
-            <span class="faction">VRU</span>
-            <span class="playerName">Madranter</span>
-            <span class="rankPoints">999 999</span>
-          </li>
-          <li>
-            <span class="nthPlayer">7</span>
-            <span class="faction">VRU</span>
-            <span class="playerName">Madranter</span>
-            <span class="rankPoints">999 999</span>
-          </li>
-          <li>
-            <span class="nthPlayer">8</span>
-            <span class="faction">VRU</span>
-            <span class="playerName">Madranter</span>
-            <span class="rankPoints">999 999</span>
-          </li>
-          <li>
-            <span class="nthPlayer">9</span>
-            <span class="faction">VRU</span>
-            <span class="playerName">Madranter</span>
-            <span class="rankPoints">999 999</span>
+          <li
+            v-for="(leaderboardUser, index) in leaderboard"
+            :key="leaderboardUser.id"
+          >
+            <span class="nthPlayer">{{ index + 1 }}</span>
+            <span class="faction">{{ leaderboardUser.faction }}</span>
+            <span class="playerName">{{ leaderboardUser.username }}</span>
+            <span class="rankPoints">{{ leaderboardUser.rankpoints }}</span>
           </li>
         </ul>
       </div>
@@ -157,6 +112,7 @@
 import { defineComponent, ref } from "vue";
 
 import InlineIconItem from "../components/InlineIconItem.vue";
+import { getKey } from "../assets/util/session";
 
 export default defineComponent({
   name: "IndexPage",
@@ -173,7 +129,39 @@ export default defineComponent({
         rank: "Rank",
         clan: "clanName",
       },
+      leaderboard: [],
     };
+  },
+  created() {
+    //FETCH USER DATA
+    fetch("http://localhost:3000/API/users/getData", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getKey("token"),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.user.name = data.user.username;
+        this.user.rank = "RankEpicName"; //data.rank;
+        this.user.clan = "ClanEpicName"; //data.clan;
+      });
+
+    //FETCH RANKING DATA
+    fetch("http://localhost:3000/API/rank/getLeaderboard", {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.leaderboard = data.users;
+      });
+  },
+  methods: {
+    onClick: function () {
+      console.log("onClick");
+    },
   },
 });
 </script>
