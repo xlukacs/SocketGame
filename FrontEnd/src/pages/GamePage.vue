@@ -48,6 +48,7 @@ import { activateSlot } from "assets/scripts/hotbar";
 import {
   initAssets,
   setInitPositions,
+  spawnObject,
 } from "assets/scripts/managers/assetManager";
 
 import {
@@ -55,6 +56,7 @@ import {
   placeIndicator,
 } from "assets/scripts/managers/movementManager";
 import { mapGetters } from "vuex";
+import { fetchGetRequest } from "src/assets/scripts/util";
 
 let scene, camera, renderer;
 
@@ -81,7 +83,10 @@ export default defineComponent({
         offsetY: 70,
         offsetZ: 25,
       },
-      playerName: "bence",
+      playerData: {
+        playerID: 0,
+        playerName: "",
+      },
       playerPos: {
         x: 0,
         y: 0,
@@ -165,7 +170,11 @@ export default defineComponent({
   methods: {
     activateHotbar(nthItem) {
       if (this.hotbar[nthItem].type == "formation") {
-        handleFormationCall(this.hotbar[nthItem].item, scene);
+        handleFormationCall(
+          this.hotbar[nthItem].item,
+          scene,
+          this.playerData.playerName
+        );
         activateSlot(this.hotbar, nthItem);
       }
     },
@@ -196,13 +205,12 @@ export default defineComponent({
           yStepAmount = (from.y - to.y) / steps;
           yStepAmount *= -1;
         }
-        //console.log("X+ ", xStepAmount, "\nY+", yStepAmount);
 
         const animFrame = window.setInterval(() => {
           this.playerPos.x += xStepAmount;
           this.playerPos.y += yStepAmount;
 
-          var object = scene.getObjectByName(this.playerName, true);
+          var object = scene.getObjectByName(this.playerData.playerName, true);
           object.position.set(this.playerPos.x, 0, this.playerPos.y);
 
           camera.position.set(
@@ -239,13 +247,13 @@ export default defineComponent({
       var { moveToPosX, moveToPosY } = getCoordsToMoveTo(ev, this.playerPos);
 
       //place indicator
-      placeIndicator(scene, this.playerName, this.playerPos, {
+      placeIndicator(scene, this.playerData.playerName, this.playerPos, {
         x: moveToPosX,
         y: moveToPosY,
       });
 
       //rotate player towards the clicked position
-      let object = scene.getObjectByName(this.playerName, true);
+      let object = scene.getObjectByName(this.playerData.playerName, true);
       object.lookAt(moveToPosX, 0, moveToPosY);
 
       //move player
@@ -316,6 +324,16 @@ export default defineComponent({
       scene.add(light);
     },
   },
+  async created() {
+    this.playerData.playerID = this.$route.query.id;
+
+    var userData = await fetchGetRequest(
+      "http://localhost:3000/API/users/getusername?user_id=" +
+        this.playerData.playerID
+    );
+
+    this.playerData.playerName = userData.user.username;
+  },
   async mounted() {
     this.init();
     console.log("Scene created.");
@@ -330,9 +348,7 @@ export default defineComponent({
       console.log("Done loading the assets.");
     }, 500);
 
-    await setInitPositions(scene, this.playerName);
-
-    setupDrones(scene, this.playerName, this.drones);
+    await setInitPositions(scene);
 
     // render loop
     const animate = () => {
@@ -341,11 +357,36 @@ export default defineComponent({
     };
     animate();
 
+    //TODO gather data about the userID passed into the game from the main portal
+    //join player
     this.$socket.emit("join_game_map", {
       server: "GE1",
       map: "1-1",
-      user_id: 1,
+      user_id: this.playerData.playerID,
+      position: this.playerPos,
     });
+  },
+  sockets: {
+    user_joined: function (data) {
+      console.log("Spawning in user: " + data.user_id);
+
+      fetchGetRequest(
+        "http://localhost:3000/API/users/getusername?user_id=" +
+          parseInt(data.user_id)
+      ).then((userData) => {
+        let objectName = userData.user.username;
+        let position = data.position;
+        position.z = 0;
+
+        spawnObject(scene, "playerModel", data.position, objectName);
+        setupDrones(scene, objectName, this.drones);
+      });
+    },
+    // user_moved: function (data) {
+    //   let object = scene.getObjectByName(data.user_id, true);
+    //   object.position.x = data.position.x;
+    //   object.position.y = data.position.y;
+    // },
   },
 });
 </script>

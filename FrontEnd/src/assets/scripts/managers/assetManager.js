@@ -2,7 +2,7 @@ const assets = [
   {
     obj: "benceBouncer.obj",
     texture: "benceBouncer.bmp",
-    name: "bence",
+    name: "playerModel",
   },
   {
     obj: "rubberDuck.obj",
@@ -41,7 +41,7 @@ export function initAssets(scene, camera, onProgress) {
   });
 }
 
-export function setInitPositions(scene, playerName) {
+export function setInitPositions(scene) {
   return new Promise((resolve, reject) => {
     var object = scene.getObjectByName("ground", true);
     object.scale.set(100, 1, 100);
@@ -49,8 +49,22 @@ export function setInitPositions(scene, playerName) {
     object = scene.getObjectByName("originalRubberDucky", true);
     object.rotation.x -= Math.PI / 2;
 
-    object = scene.getObjectByName(playerName, true);
-    object.scale.set(10, 10, 10);
+    // object = scene.getObjectByName(playerName, true);
+    // object.scale.set(10, 10, 10);
+    resolve();
+  });
+}
+
+export function spawnObject(scene, objectName, position, spawnedObjectName) {
+  return new Promise((resolve, reject) => {
+    var object = scene.getObjectByName(objectName, true);
+    let clone = object.clone();
+    clone.name = spawnedObjectName;
+
+    scene.add(clone);
+
+    clone.position.set(position.x, position.y, position.z);
+    clone.scale.set(10, 10, 10);
     resolve();
   });
 }

@@ -6,34 +6,34 @@ export function setupDrones(scene, playerName, drones) {
   //spawn drones
   var object = scene.getObjectByName("originalRubberDucky", true);
   let drone1 = object.clone();
-  drone1.name = "drone1";
+  drone1.name = "drone1" + playerName;
   drone1.scale.set(0.1, 0.1, 0.1);
   let drone2 = object.clone();
-  drone2.name = "drone2";
+  drone2.name = "drone2" + playerName;
   drone2.scale.set(0.1, 0.1, 0.1);
   let drone3 = object.clone();
-  drone3.name = "drone3";
+  drone3.name = "drone3" + playerName;
   drone3.scale.set(0.1, 0.1, 0.1);
   let drone4 = object.clone();
-  drone4.name = "drone4";
+  drone4.name = "drone4" + playerName;
   drone4.scale.set(0.1, 0.1, 0.1);
   let drone5 = object.clone();
-  drone5.name = "drone5";
+  drone5.name = "drone5" + playerName;
   drone5.scale.set(0.1, 0.1, 0.1);
   let drone6 = object.clone();
-  drone6.name = "drone6";
+  drone6.name = "drone6" + playerName;
   drone6.scale.set(0.1, 0.1, 0.1);
   let drone7 = object.clone();
-  drone7.name = "drone7";
+  drone7.name = "drone7" + playerName;
   drone7.scale.set(0.1, 0.1, 0.1);
   let drone8 = object.clone();
-  drone8.name = "drone8";
+  drone8.name = "drone8" + playerName;
   drone8.scale.set(0.1, 0.1, 0.1);
   let drone9 = object.clone();
-  drone9.name = "drone9";
+  drone9.name = "drone9" + playerName;
   drone9.scale.set(0.1, 0.1, 0.1);
   let drone10 = object.clone();
-  drone10.name = "drone10";
+  drone10.name = "drone10" + playerName;
   drone10.scale.set(0.1, 0.1, 0.1);
 
   //add to player
@@ -50,7 +50,7 @@ export function setupDrones(scene, playerName, drones) {
   object.add(drone10);
 
   //set default formation TODO last used formation
-  defaultFormation(scene);
+  handleFormationCall("default", scene, playerName);
 
   //set the proper skin for the drones
   for (let i = 0; i < drones.length; i++) {
@@ -59,7 +59,7 @@ export function setupDrones(scene, playerName, drones) {
     if (drone.design.name != undefined) {
       changeDroneDesign(
         scene,
-        "drone" + (i + 1),
+        "drone" + (i + 1) + playerName,
         drone.design.name,
         drone.design.skin
       );
@@ -67,111 +67,115 @@ export function setupDrones(scene, playerName, drones) {
   }
 }
 
-export function handleFormationCall(formation, scene) {
-  if (formation == "default") defaultFormation(scene);
+export function handleFormationCall(formation, scene, playerName) {
+  var playerPosition = scene.getObjectByName(playerName, true).position;
 
-  if (formation == "turtle") turtleFormation(scene);
+  if (formation == "default")
+    defaultFormation(scene, playerPosition, playerName);
+
+  if (formation == "turtle") turtleFormation(scene, playerPosition, playerName);
 }
 
-export function defaultFormation(scene) {
-  var object = scene.getObjectByName("drone1", true);
+export function defaultFormation(scene, playerPosition, playerName) {
+  console.log("default formation");
+  var object = scene.getObjectByName("drone1" + playerName, true);
   //left
-  object.position.set(0, 0, 0);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x -= 2;
   object.position.z -= 1;
 
-  object = scene.getObjectByName("drone2", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone2" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x -= 2.5;
 
-  object = scene.getObjectByName("drone3", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone3" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x -= 2;
   object.position.z += 1;
 
   //back
-  object = scene.getObjectByName("drone4", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone4" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x -= 1;
   object.position.z -= 3;
 
-  object = scene.getObjectByName("drone5", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone5" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.z -= 3.5;
 
-  object = scene.getObjectByName("drone6", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone6" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x += 1;
   object.position.z -= 3;
 
-  object = scene.getObjectByName("drone7", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone7" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.z -= 2;
 
   //right
-  object = scene.getObjectByName("drone8", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone8" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x += 2;
   object.position.z += 1;
 
-  object = scene.getObjectByName("drone9", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone9" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x += 2.5;
 
-  object = scene.getObjectByName("drone10", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone10" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x += 2;
   object.position.z -= 1;
 }
 
-export function turtleFormation(scene) {
+export function turtleFormation(scene, playerPosition, playerName) {
   //left
-  var object = scene.getObjectByName("drone1", true);
-  object.position.set(0, 0, 0);
+  var object = scene.getObjectByName("drone1" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x -= 0.5;
   object.position.z += 2;
 
-  object = scene.getObjectByName("drone2", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone2" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x -= 1.5;
   object.position.z += 1;
 
-  object = scene.getObjectByName("drone3", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone3" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x -= 2.5;
 
-  object = scene.getObjectByName("drone4", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone4" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x -= 1.5;
   object.position.z -= 1;
 
-  object = scene.getObjectByName("drone5", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone5" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x -= 0.5;
   object.position.z -= 2;
 
   //right
-  object = scene.getObjectByName("drone6", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone6" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x += 0.5;
   object.position.z += 2;
 
-  object = scene.getObjectByName("drone7", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone7" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x += 1.5;
   object.position.z += 1;
 
-  object = scene.getObjectByName("drone8", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone8" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x += 2.5;
 
-  object = scene.getObjectByName("drone9", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone9" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x += 1.5;
   object.position.z -= 1;
 
-  object = scene.getObjectByName("drone10", true);
-  object.position.set(0, 0, 0);
+  object = scene.getObjectByName("drone10" + playerName, true);
+  object.position.set(playerPosition.x, playerPosition.y, 1);
   object.position.x += 0.5;
   object.position.z -= 2;
 }

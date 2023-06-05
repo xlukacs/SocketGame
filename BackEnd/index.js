@@ -58,18 +58,31 @@ const io = require('socket.io')(server, { cors: { origin: "http://localhost:8080
 app.io = io;
 
 io.on('connection', (socket) => {
-    let maps = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6'];
-    let activeUsers = [];
+    // let maps = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6'];
+    let users = [];
     console.log('User connected:' + socket.id)
 
     socket.on('join_game_map', (data) => {
         console.log('channel joining: ' + data.server + data.map)
-        if(activeUsers.indexOf(data.user_id) == -1){
-            activeUsers.push(data.user_id)
-            socket.join(data.map);
+        if(!users.find(user => user.id === data.user_id)){
+            users.push({
+                id: data.user_id,
+                position: {
+                    x: data.position.x,
+                    y: data.position.y
+                }
+            })
+
+            socket.join('map');
         }else{
             console.log("Allready in that channel.");
         }
+
+        // const roomSockets = io.sockets.adapter.rooms.get(data.map);
+        // console.log(roomSockets)
+
+        io.sockets.emit('user_joined', { user_id: data.user_id, position: data.position }); //.broadcast.to(data.map)
+        console.log("User spawning at: ", data.position, data.user_id)
     })
 })
 

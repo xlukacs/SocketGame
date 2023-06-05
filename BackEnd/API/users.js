@@ -14,6 +14,17 @@ router.get('/getData', authenticateToken, async (req, res) => {
     res.status(200).json({ user }); //, availability: statusParsedRes
 })
 
+router.get('/getusername', async (req, res) => {
+    console.log("Got a request in /API/users/getusername", req.query.user_id);
+
+    var query = 'SELECT username FROM users WHERE id=$1';
+    const usernameResult = await pool.query(query, [req.query.user_id]);
+    
+    var user = usernameResult.rows[0];
+
+    res.status(200).json({ user }); //, availability: statusParsedRes
+})
+
 // router.post('/sendFriendRequest', authenticateToken, async (req, res) => {
 //     console.log("Got a request in /API/users/sendFriendRequest", req.user.id, req.body.user_id);
 //     var query = "   INSERT INTO public.user_actions( " +

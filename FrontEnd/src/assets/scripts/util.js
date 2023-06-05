@@ -70,3 +70,16 @@ export function log(message) {
   var canLog = true;
   if (canLog) console.log(message);
 }
+
+export async function fetchGetRequest(url) {
+  return new Promise(async (resolve, reject) => {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    resolve(response.json());
+  });
+}
