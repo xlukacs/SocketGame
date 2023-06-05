@@ -90,6 +90,7 @@ export default defineComponent({
       playerPos: {
         x: 0,
         y: 0,
+        z: 0,
       },
       hotbar: [
         {
@@ -170,34 +171,25 @@ export default defineComponent({
   methods: {
     activateHotbar(nthItem) {
       if (this.hotbar[nthItem].type == "formation") {
-        // handleFormationCall(
-        //   this.hotbar[nthItem].item,
-        //   scene,
-        //   this.playerData.playerName
-        // );
         activateSlot(this.hotbar, nthItem);
 
         this.$socket.emit("activated_drone_formation", {
-          // server: "GE1",
-          // map: "1-1",
           playerName: this.playerData.playerName,
           formation: this.hotbar[nthItem].item,
         });
       }
     },
-    async animateMovement(from, to) {
-      var begPoint = new THREE.Vector3(from.x, from.z, from.y);
-      var endPoint = new THREE.Vector3(to.x, to.z, to.y);
+    async animateMovement(from, to, objectName = this.playerData.playerName) {
+      var begPoint = new THREE.Vector3(from.x, from.y, from.z);
+      var endPoint = new THREE.Vector3(to.x, to.y, to.z);
       var distance = begPoint.distanceTo(endPoint);
 
       var steps = Math.ceil(distance / 1);
       var time = 15;
 
-      //console.log("From", from, "\nTO", to);
-
       if (steps > 0) {
         let xStepAmount = 0,
-          yStepAmount = 0;
+          zStepAmount = 0;
 
         if (from.x < to.x) {
           xStepAmount = (to.x - from.x) / steps;
@@ -206,38 +198,49 @@ export default defineComponent({
           xStepAmount *= -1;
         }
 
-        if (from.y < to.y) {
-          yStepAmount = (to.y - from.y) / steps;
+        if (from.z < to.z) {
+          zStepAmount = (to.z - from.z) / steps;
         } else {
-          yStepAmount = (from.y - to.y) / steps;
-          yStepAmount *= -1;
+          zStepAmount = (from.z - to.z) / steps;
+          zStepAmount *= -1;
         }
 
+        var objectPosition = scene.getObjectByName(objectName, true).position;
         const animFrame = window.setInterval(() => {
-          this.playerPos.x += xStepAmount;
-          this.playerPos.y += yStepAmount;
+          objectPosition.x += xStepAmount;
+          objectPosition.z += zStepAmount;
 
-          var object = scene.getObjectByName(this.playerData.playerName, true);
-          object.position.set(this.playerPos.x, 0, this.playerPos.y);
+          if (objectName == this.playerData.playerName) {
+            this.playerPos.x = objectPosition.x;
+            this.playerPos.z = objectPosition.z;
+          }
+
+          var object = scene.getObjectByName(objectName, true);
+          object.position.set(objectPosition.x, 0, objectPosition.z);
 
           camera.position.set(
-            this.playerPos.x,
+            objectPosition.x,
             camera.position.y,
-            this.playerPos.y + this.camera.offsetZ
+            objectPosition.z + this.camera.offsetZ
           );
 
-          object = scene.getObjectByName("pathToIndicator", true);
-          object.geometry.dispose();
-          var points = [];
-          points.push(new THREE.Vector3(this.playerPos.x, 2, this.playerPos.y));
-          points.push(new THREE.Vector3(to.x, 2, to.y));
+          if (objectName == this.playerData.playerName) {
+            object = scene.getObjectByName("pathToIndicator", true);
+            object.geometry.dispose();
+            var points = [];
+            points.push(
+              new THREE.Vector3(objectPosition.x, 2, objectPosition.z)
+            );
+            points.push(new THREE.Vector3(to.x, 2, to.z));
 
-          var updatedGeometry = new THREE.BufferGeometry().setFromPoints(
-            points
-          );
-          object.geometry = updatedGeometry;
+            var updatedGeometry = new THREE.BufferGeometry().setFromPoints(
+              points
+            );
+            object.geometry = updatedGeometry;
+          }
 
           steps--;
+          console.log(steps);
           if (steps <= 0) {
             window.clearInterval(animFrame);
 
@@ -251,22 +254,51 @@ export default defineComponent({
     },
     movePlayer(ev) {
       //calculate the position the player wants to move
-      var { moveToPosX, moveToPosY } = getCoordsToMoveTo(ev, this.playerPos);
+      var { moveToPosX, moveToPosZ } = getCoordsToMoveTo(ev, this.playerPos);
 
-      //place indicator
-      placeIndicator(scene, this.playerData.playerName, this.playerPos, {
-        x: moveToPosX,
-        y: moveToPosY,
+      // //place indicator
+      // placeIndicator(scene, this.playerData.playerName, this.playerPos, {
+      //   x: moveToPosX,
+      //   z: moveToPosZ,
+      // });
+
+      // //rotate player towards the clicked position
+      // let object = scene.getObjectByName(this.playerData.playerName, true);
+      // object.lookAt(moveToPosX, 0, moveToPosZ);
+
+      // //move player
+      // this.animateMovement(
+      //   { x: this.playerPos.x, y: 0, z: this.playerPos.z },
+      //   { x: moveToPosX, y: 0, z: moveToPosZ }
+      // );
+
+      this.$socket.emit("object_moved", {
+        objectName: this.playerData.playerName,
+        to: { x: moveToPosX, y: 0, z: moveToPosZ },
+        from: { x: this.playerPos.x, y: 0, z: this.playerPos.z },
       });
+    },
+    moveObject(
+      from,
+      to,
+      objectName,
+      followWithCamera = false,
+      placeIndicatorFlag = false
+    ) {
+      if (placeIndicatorFlag) placeIndicator(scene, objectName, from, to);
 
-      //rotate player towards the clicked position
-      let object = scene.getObjectByName(this.playerData.playerName, true);
-      object.lookAt(moveToPosX, 0, moveToPosY);
+      if (followWithCamera) {
+        let object = scene.getObjectByName(objectName, true);
+        object.lookAt(to.x, 0, to.z);
+      }
 
-      //move player
+      let object = scene.getObjectByName(objectName, true);
+      object.lookAt(to.x, 0, to.z);
+
       this.animateMovement(
-        { x: this.playerPos.x, z: 0, y: this.playerPos.y },
-        { x: moveToPosX, z: 0, y: moveToPosY }
+        { x: from.x, y: from.y, z: from.z },
+        { x: to.x, y: to.y, z: to.z },
+        objectName
       );
     },
     handleKey(key) {
@@ -349,12 +381,6 @@ export default defineComponent({
       this.loadingProgress = progress;
     });
 
-    //delay loading screen a bit
-    window.setTimeout(() => {
-      this.loading = false;
-      console.log("Done loading the assets.");
-    }, 500);
-
     await setInitPositions(scene);
 
     // render loop
@@ -366,12 +392,19 @@ export default defineComponent({
 
     //TODO gather data about the userID passed into the game from the main portal
     //join player
-    this.$socket.emit("join_game_map", {
-      server: "GE1",
-      map: "1-1",
-      user_id: this.playerData.playerID,
-      position: this.playerPos,
-    });
+
+    //delay loading screen a bit
+    window.setTimeout(() => {
+      this.loading = false;
+      console.log("Done loading the assets.");
+
+      this.$socket.emit("join_game_map", {
+        server: "GE1",
+        map: "1-1",
+        user_id: this.playerData.playerID,
+        position: this.playerPos,
+      });
+    }, 500);
   },
   sockets: {
     user_joined: function (data) {
@@ -392,8 +425,20 @@ export default defineComponent({
       });
     },
     user_activated_drone_design: function (data) {
-      console.log("Activating drone design: ", data);
       handleFormationCall(data.formation, scene, data.playerName);
+    },
+    object_moved: function (data) {
+      console.log("Object moved: ", data.objectName, data.from, data.to);
+      var ownPlayer = this.playerData.playerName == data.objectName;
+      var followWithCamera = ownPlayer;
+
+      this.moveObject(
+        data.from,
+        data.to,
+        data.objectName,
+        ownPlayer,
+        followWithCamera
+      );
     },
   },
 });

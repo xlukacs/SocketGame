@@ -70,7 +70,7 @@ export function setupDrones(scene, playerName, drones) {
 export function handleFormationCall(formation, scene, playerName) {
   var player = scene.getObjectByName(playerName, true);
 
-  var playerPosition = player.position;
+  // var playerPosition = player.position;
   var passedPlayerPosition = {
     // x: Math.round(playerPosition.x),
     // z: Math.round(playerPosition.z),

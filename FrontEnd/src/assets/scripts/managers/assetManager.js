@@ -60,7 +60,7 @@ export function spawnObject(
   objectName,
   position = { x: 0, y: 0, z: 0 },
   spawnedObjectName,
-  scale = { x: 1, y: 1, z: 1 }
+  scale = { x: 10, y: 10, z: 10 }
 ) {
   return new Promise((resolve, reject) => {
     var object = scene.getObjectByName(objectName, true);

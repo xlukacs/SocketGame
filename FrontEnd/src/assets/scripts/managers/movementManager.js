@@ -2,18 +2,18 @@ import * as THREE from "three";
 
 export function getCoordsToMoveTo(event, playerPos) {
   const screenMiddleX = window.innerWidth / 2;
-  const screenMiddleY = window.innerHeight / 2;
+  const screenMiddleZ = window.innerHeight / 2;
 
   var moveByX = screenMiddleX - event.clientX;
-  var moveByY = screenMiddleY - event.clientY;
+  var moveByZ = screenMiddleZ - event.clientY;
 
   moveByX /= -8;
-  moveByY /= -8;
+  moveByZ /= -8;
 
   var moveToPosX = playerPos.x + moveByX;
-  var moveToPosY = playerPos.y + moveByY;
+  var moveToPosZ = playerPos.z + moveByZ;
 
-  return { moveToPosX: moveToPosX, moveToPosY: moveToPosY };
+  return { moveToPosX: moveToPosX, moveToPosZ: moveToPosZ };
 }
 
 export function placeIndicator(scene, playerName, playerPos, movePosition) {
@@ -30,7 +30,7 @@ export function placeIndicator(scene, playerName, playerPos, movePosition) {
   if (objectFound) {
     //add indicator
     object = scene.getObjectByName("indicator", true);
-    object.position.set(movePosition.x, 2, movePosition.y);
+    object.position.set(movePosition.x, 2, movePosition.z);
 
     //remove old path
     object = scene.getObjectByName("pathToIndicator", true);
@@ -38,8 +38,8 @@ export function placeIndicator(scene, playerName, playerPos, movePosition) {
 
     //construct new path
     let line = createLine(
-      { x: playerPos.x, y: playerPos.y },
-      { x: movePosition.x, y: movePosition.y },
+      { x: playerPos.x, z: playerPos.z },
+      { x: movePosition.x, z: movePosition.z },
       0x0000ff
     );
 
@@ -50,15 +50,15 @@ export function placeIndicator(scene, playerName, playerPos, movePosition) {
     let indicator = object.clone();
 
     indicator.name = "indicator";
-    indicator.position.set(movePosition.x, 2, movePosition.y);
+    indicator.position.set(movePosition.x, 2, movePosition.z);
     indicator.scale.set(1, 1, 1);
 
     scene.add(indicator);
 
     //contsruct a path towards the clicked point
     let line = createLine(
-      { x: playerPos.x, y: playerPos.y },
-      { x: movePosition.x, y: movePosition.y },
+      { x: playerPos.x, z: playerPos.z },
+      { x: movePosition.x, z: movePosition.z },
       0x0000ff
     );
 
@@ -68,8 +68,8 @@ export function placeIndicator(scene, playerName, playerPos, movePosition) {
 
 function createLine(start, end, color) {
   var points = [];
-  points.push(new THREE.Vector3(start.x, 2, start.y));
-  points.push(new THREE.Vector3(end.x, 2, end.y));
+  points.push(new THREE.Vector3(start.x, 2, start.z));
+  points.push(new THREE.Vector3(end.x, 2, end.z));
 
   var geometry = new THREE.BufferGeometry().setFromPoints(points);
   var material = new THREE.LineBasicMaterial({ color: color });
