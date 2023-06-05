@@ -55,7 +55,13 @@ export function setInitPositions(scene) {
   });
 }
 
-export function spawnObject(scene, objectName, position, spawnedObjectName) {
+export function spawnObject(
+  scene,
+  objectName,
+  position = { x: 0, y: 0, z: 0 },
+  spawnedObjectName,
+  scale = { x: 1, y: 1, z: 1 }
+) {
   return new Promise((resolve, reject) => {
     var object = scene.getObjectByName(objectName, true);
     let clone = object.clone();
@@ -64,7 +70,8 @@ export function spawnObject(scene, objectName, position, spawnedObjectName) {
     scene.add(clone);
 
     clone.position.set(position.x, position.y, position.z);
-    clone.scale.set(10, 10, 10);
+    clone.scale.set(scale.x, scale.y, scale.z);
+
     resolve();
   });
 }

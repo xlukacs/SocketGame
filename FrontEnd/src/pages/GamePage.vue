@@ -170,12 +170,19 @@ export default defineComponent({
   methods: {
     activateHotbar(nthItem) {
       if (this.hotbar[nthItem].type == "formation") {
-        handleFormationCall(
-          this.hotbar[nthItem].item,
-          scene,
-          this.playerData.playerName
-        );
+        // handleFormationCall(
+        //   this.hotbar[nthItem].item,
+        //   scene,
+        //   this.playerData.playerName
+        // );
         activateSlot(this.hotbar, nthItem);
+
+        this.$socket.emit("activated_drone_formation", {
+          // server: "GE1",
+          // map: "1-1",
+          playerName: this.playerData.playerName,
+          formation: this.hotbar[nthItem].item,
+        });
       }
     },
     async animateMovement(from, to) {
@@ -368,8 +375,6 @@ export default defineComponent({
   },
   sockets: {
     user_joined: function (data) {
-      console.log("Spawning in user: " + data.user_id);
-
       fetchGetRequest(
         "http://localhost:3000/API/users/getusername?user_id=" +
           parseInt(data.user_id)
@@ -378,15 +383,18 @@ export default defineComponent({
         let position = data.position;
         position.z = 0;
 
-        spawnObject(scene, "playerModel", data.position, objectName);
+        spawnObject(scene, "playerModel", data.position, objectName, {
+          x: 10,
+          y: 10,
+          z: 10,
+        });
         setupDrones(scene, objectName, this.drones);
       });
     },
-    // user_moved: function (data) {
-    //   let object = scene.getObjectByName(data.user_id, true);
-    //   object.position.x = data.position.x;
-    //   object.position.y = data.position.y;
-    // },
+    user_activated_drone_design: function (data) {
+      console.log("Activating drone design: ", data);
+      handleFormationCall(data.formation, scene, data.playerName);
+    },
   },
 });
 </script>

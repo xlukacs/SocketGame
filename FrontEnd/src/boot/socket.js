@@ -7,7 +7,7 @@ export default boot(({ app }) => {
 
   app.use(
     new VueSocketIO({
-      debug: true,
+      debug: false,
       connection: socket,
     })
   );

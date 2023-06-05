@@ -84,6 +84,11 @@ io.on('connection', (socket) => {
         io.sockets.emit('user_joined', { user_id: data.user_id, position: data.position }); //.broadcast.to(data.map)
         console.log("User spawning at: ", data.position, data.user_id)
     })
+
+    socket.on('activated_drone_formation', (data) => {
+        console.log('user changed formation: ' + data.playerName, data.formation)
+        io.sockets.emit('user_activated_drone_design', { playerName: data.playerName, formation: data.formation });
+    })
 })
 
 // io.on("connection", (socket) => {
