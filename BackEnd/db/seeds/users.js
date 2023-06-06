@@ -10,7 +10,7 @@ exports.seed = async function(knex) {
       // Inserts seed entries
       return knex('users').insert([
         { id: 1, username: 'John Doe', email: 'john@example.com', password: '123456', faction: 'VRU' },
-        { id: 2, username: 'madrent', email: 'email@test.com', password: 'password', faction: 'EIC' },
+        { id: 2, username: 'madrent', email: 'email@test.com', password: 'password', faction: 'EIC', uridium: 10000, credits: 100000 },
       ]);
     });
 };

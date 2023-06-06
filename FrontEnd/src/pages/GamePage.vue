@@ -240,7 +240,6 @@ export default defineComponent({
           }
 
           steps--;
-          console.log(steps);
           if (steps <= 0) {
             window.clearInterval(animFrame);
 
@@ -255,22 +254,6 @@ export default defineComponent({
     movePlayer(ev) {
       //calculate the position the player wants to move
       var { moveToPosX, moveToPosZ } = getCoordsToMoveTo(ev, this.playerPos);
-
-      // //place indicator
-      // placeIndicator(scene, this.playerData.playerName, this.playerPos, {
-      //   x: moveToPosX,
-      //   z: moveToPosZ,
-      // });
-
-      // //rotate player towards the clicked position
-      // let object = scene.getObjectByName(this.playerData.playerName, true);
-      // object.lookAt(moveToPosX, 0, moveToPosZ);
-
-      // //move player
-      // this.animateMovement(
-      //   { x: this.playerPos.x, y: 0, z: this.playerPos.z },
-      //   { x: moveToPosX, y: 0, z: moveToPosZ }
-      // );
 
       this.$socket.emit("object_moved", {
         objectName: this.playerData.playerName,

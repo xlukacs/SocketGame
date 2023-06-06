@@ -1,23 +1,15 @@
 <template>
   <q-page class="flex justify-center">
-    <q-splitter v-model="splitterModel">
-      <template v-slot:before>
-        <q-tabs v-model="activeShopTab" vertical class="text-teal">
-          <q-tab name="ships" label="Ships"></q-tab>
-          <q-tab name="lasers" label="Lasers"></q-tab>
-          <q-tab name="generators" label="Generators"></q-tab>
+    <div class="shopWrapper row">
+      <div class="categories">
+        <q-tabs vertical v-model="shopTab" class="text-teal">
+          <q-tab name="ships" label="Ships" />
+          <q-tab name="lasers" label="Lasers" />
+          <q-tab name="generators" label="Generators" />
         </q-tabs>
-      </template>
-
-      <template v-slot:after>
-        <q-tab-panels
-          v-model="activeShopTab"
-          animated
-          swipeable
-          vertical
-          transition-prev="jump-up"
-          transition-next="jump-up"
-        >
+      </div>
+      <div class="categoryItems">
+        <q-tab-panels v-model="shopTab" animated swipeable vertical dark>
           <q-tab-panel name="ships">
             <div class="shop-items flex row">
               <ShopItem
@@ -28,7 +20,6 @@
               />
             </div>
           </q-tab-panel>
-
           <q-tab-panel name="lasers">
             <div class="shop-items flex row">
               <ShopItem
@@ -39,7 +30,6 @@
               />
             </div>
           </q-tab-panel>
-
           <q-tab-panel name="generators">
             <div class="shop-items flex row">
               <ShopItem
@@ -51,12 +41,13 @@
             </div>
           </q-tab-panel>
         </q-tab-panels>
-      </template>
-    </q-splitter>
+      </div>
+    </div>
 
     <ItemBuyerPopup
       :open="isBuyerPopupOpen"
       :item="itemToBuyID"
+      :singular="singularItem"
       @close-buyer-popup="closeItemPopup"
     />
   </q-page>
@@ -83,7 +74,9 @@ export default defineComponent({
   },
   data() {
     return {
+      shopTab: "ships",
       itemToBuyID: "",
+      singularItem: false,
       isBuyerPopupOpen: false,
       items: {
         ships: [],
@@ -106,6 +99,9 @@ export default defineComponent({
       console.log("Opening", id);
       this.itemToBuyID = id;
       this.isBuyerPopupOpen = true;
+
+      if (this.shopTab == "ships") this.singularItem = true;
+      else this.singularItem = false;
     },
     closeItemPopup: function () {
       this.isBuyerPopupOpen = false;
@@ -116,5 +112,25 @@ export default defineComponent({
 <style lang="scss" scoped>
 .shop-items {
   gap: 5px;
+}
+
+.shopWrapper {
+  margin: auto;
+  margin-top: 20px;
+  width: 80%;
+  height: 100%;
+  background-color: #1a1d23;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+.categories {
+  width: 20%;
+  height: 100%;
+}
+.categoryItems {
+  width: 80%;
+  height: 100%;
 }
 </style>

@@ -85,66 +85,12 @@ io.on('connection', (socket) => {
     })
 
     socket.on('activated_drone_formation', (data) => {
-        console.log('user changed formation: ' + data.playerName, data.formation)
+        // console.log('user changed formation: ' + data.playerName, data.formation)
         io.sockets.emit('user_activated_drone_design', { playerName: data.playerName, formation: data.formation });
     })
 
     socket.on('object_moved', (data) => {
-        console.log('object moved formation: ' + data.objectName, data.from, data.to)
+        // console.log('object moved formation: ' + data.objectName, data.from, data.to)
         io.sockets.emit('object_moved', { objectName: data.objectName, from: data.from, to: data.to });
     })
 })
-
-// io.on("connection", (socket) => {
-//     let userRooms = [];
-//     console.log('User connected:' + socket.id)
-
-//     socket.on('join_chat_room', room => {
-//         console.log('channel joining: ' + room)
-//         if(userRooms.indexOf(room) == -1){
-//             userRooms.push(room)
-//             socket.join(userRooms);
-            
-//             console.log("Now connected to: " + userRooms)
-//         }else{
-//             console.log("Allready in that channel.");
-//         }
-//     })
-
-//     socket.on('leave_chat_room', (room) => {
-//         console.log('channel left:' + room)
-//         socket.broadcast.to(room).emit('user_disconnect')
-//     })
-
-//     socket.on('message_received_conf', (room) => {
-//         socket.broadcast.to(room).emit('message_received_confirm')
-//     })
-
-//     socket.on('message_send', (message, message_details, room) => {
-//         socket.emit('message_sent_confirm')
-//         socket.broadcast.to(room).emit('message_received', { message: message, has_attachment: false, user_id: message_details.user_id });
-        
-//         console.log("Notification sent to: " + 'user-' + message_details.partner_id + '-broadcast') 
-//         socket.to('user-' + message_details.partner_id + '-broadcast').emit('notification_broadcast', { type: 'new_message', message: message, has_attachment: false, user_id: message_details.user_id })
-//     })
-    
-//     socket.on('send_notification', (data) => {
-//         console.log(data)
-//         if(data.type == 'friend_request'){
-//             console.log("Notification sent to: " + 'user-' + data.requested_id + '-broadcast') 
-//             socket.to('user-' + data.requested_id + '-broadcast').emit('notification_broadcast', { type: 'friend_request', from_id: data.sender_id })
-//         }else{
-//             console.log('Unknown notification type.')
-//         }
-//     })
-
-//     socket.on('testEvent', (data) => {
-//         console.log('User sent: ' + data.message);
-
-//         socket.emit('testListener', 'data');
-//     })
-
-//     socket.on('rtc-message', (data) => {
-//         socket.broadcast.emit('onmessage', data)
-//     })
-// })

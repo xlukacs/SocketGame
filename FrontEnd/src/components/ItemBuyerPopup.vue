@@ -13,7 +13,13 @@
       <p>{{ itemData.name }}</p>
       <span>{{ itemData.desc }}</span>
       <div class="controls">
-        <input type="number" name="itemAmount" min="1" value="1" />
+        <input
+          type="number"
+          name="itemAmount"
+          min="1"
+          value="1"
+          v-if="!singular"
+        />
         <q-btn color="primary" label="BUY" @click="buyItem()" />
       </div>
     </div>
@@ -42,7 +48,7 @@ export default {
     item(newValue, oldValue) {
       this.loadItemData(this.item);
 
-      console.log("PROP CHANGE", this.itemData);
+      // console.log("PROP CHANGE", this.itemData);
     },
   },
   computed: {
@@ -55,6 +61,7 @@ export default {
   props: {
     item: String,
     open: Boolean,
+    singular: Boolean,
   },
   methods: {
     loadItemData: async function (itemID) {
@@ -98,6 +105,7 @@ export default {
       margin-bottom: 10px;
     }
     .controls {
+      height: 50px;
       input {
         margin-right: 10px;
         padding: 5px 10px;
