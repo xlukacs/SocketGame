@@ -4,6 +4,8 @@ import { TextureLoader } from "three/src/loaders/TextureLoader";
 import { MeshLambertMaterial } from "three/src/materials/MeshLambertMaterial";
 import { Mesh } from "three";
 
+import { getKey } from "../util/session";
+
 export async function loadObject(scene, camera, objName, textureName, id) {
   const loader = new OBJLoader();
 
@@ -71,15 +73,28 @@ export function log(message) {
   if (canLog) console.log(message);
 }
 
-export async function fetchGetRequest(url) {
+export async function fetchGetRequest(url, includeToken = false) {
   return new Promise(async (resolve, reject) => {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    if (includeToken) {
+      // console.log(getKey("token"));
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + getKey("token"),
+        },
+      });
 
-    resolve(response.json());
+      resolve(response.json());
+    } else {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      resolve(response.json());
+    }
   });
 }

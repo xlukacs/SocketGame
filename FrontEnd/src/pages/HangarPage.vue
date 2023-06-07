@@ -1,36 +1,10 @@
 <template>
   <q-page class="flex justify-center">
     <section class="left">
-      <!-- <q-virtual-scroll
-        style="max-height: 300px"
-        :items="shipList"
-        separator
-        v-slot="{ item, index }"
-        class="shipList"
-      >
-        <q-card
-          class="shipCard"
-          v-if="item.isAvailable"separator
-          :key="'shipActive' + index"
-        >
-          <img src="https://cdn.quasar.dev/img/mountains.jpg" />
-          <q-card-section>
-            <div class="text-h6">
-              {{ item.label }} <q-icon name="check" color="orange-10" />
-            </div>
-          </q-card-section>
-        </q-card>
-        <q-card class="shipCard" v-else :key="'shipInactive' + index">
-          <img src="https://cdn.quasar.dev/img/mountains.jpg" />
-          <q-card-section>
-            <div class="text-h6">{{ item.label }}</div>
-          </q-card-section>
-        </q-card>
-      </q-virtual-scroll> -->
       <div class="shipList">
         <q-card class="shipCard" v-for="ship in shipList" v-bind:key="ship.id">
           <q-img
-            src="https://placeimg.com/500/300/nature"
+            :src="require('/public/assets/items/' + ship.image)"
             :ratio="16 / 9"
             spinner-color="primary"
             spinner-size="82px"
@@ -235,57 +209,94 @@
 </template>
 
 <script>
+import { fetchGetRequest } from "src/assets/scripts/util";
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   name: "HangarPage",
-  setup() {
-    return {
-      tab: ref("ship"),
-      shipList: [
-        {
-          label: "Ship1",
-          isAvailable: true,
-        },
-        {
-          label: "Ship2",
-          isAvailable: true,
-        },
-        {
-          label: "Ship3",
-          isAvailable: false,
-        },
-        {
-          label: "Ship4",
-          isAvailable: false,
-        },
-        {
-          label: "Ship5",
-          isAvailable: false,
-        },
-      ],
-    };
+  data() {
+    return {};
   },
   data() {
     return {
       isSelectedShipActive: false,
+      tab: ref("ship"),
+      shipList: [
+        // {
+        //   label: "Ship1",
+        //   isAvailable: true,
+        // },
+        // {
+        //   label: "Ship2",
+        //   isAvailable: true,
+        // },
+        // {
+        //   label: "Ship3",
+        //   isAvailable: false,
+        // },
+        // {
+        //   label: "Ship4",
+        //   isAvailable: false,
+        // },
+        // {
+        //   label: "Ship5",
+        //   isAvailable: false,
+        // },
+      ],
     };
+  },
+  methods: {
+    getShipIndex(shipName) {
+      for (let i = 0; i < this.shipList.length; i++) {
+        const ship = this.shipList[i];
+
+        if (ship.label === shipName) return i;
+      }
+
+      return -1;
+    },
+  },
+  created() {
+    fetchGetRequest("http://localhost:3000/API/shop/getships").then(
+      (response) => {
+        for (let i = 0; i < response.ship.length; i++) {
+          const ship = response.ship[i];
+          this.shipList.push({
+            label: ship.name,
+            isAvailable: false,
+            image: ship.pic,
+          });
+        }
+      }
+    );
+
+    fetchGetRequest("http://localhost:3000/API/users/getships", true).then(
+      (response) => {
+        if (!response.ships.length) return;
+
+        for (let i = 0; i < response.ships.length; i++) {
+          const ship = response.ships[i];
+
+          this.shipList[this.getShipIndex(ship.name)].isAvailable = true;
+        }
+      }
+    );
   },
 });
 </script>
 <style lang="scss" scoped>
 section {
   margin-top: 10px;
-  max-height: 450px;
 }
 .left {
   width: 40%;
-  background-color: lightgray;
-  padding: 10px;
-  border-radius: 5px;
   .shipList {
     width: 100%;
-    height: 470px;
+    display: flex;
+    flex-flow: row wrap;
+    background-color: lightgray;
+    padding: 10px;
+    border-radius: 5px;
   }
   .shipCard {
     cursor: pointer;

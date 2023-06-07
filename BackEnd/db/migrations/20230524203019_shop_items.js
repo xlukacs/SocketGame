@@ -11,6 +11,7 @@ exports.up = function(knex) {
         table.string('desc').notNullable();
         table.string('pic').notNullable();
         table.string('item_id').notNullable();
+        table.string('category').notNullable();
         table.timestamps(true, true);
       });
 };

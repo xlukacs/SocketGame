@@ -13,5 +13,14 @@ router.post('/getItems', async (req, res) => {
     res.status(200).json({ items: itemsResult })
 })
 
+router.get('/getships', async (req, res) => {
+    console.log("Got a request in /API/shop/getships");
+    var query = "SELECT * FROM shop_items WHERE category='ship';"
+
+    const shipsResult = await pool.query(query, [])
+
+    res.status(200).json({ ship:shipsResult.rows })
+})
+
 
 module.exports = router;
