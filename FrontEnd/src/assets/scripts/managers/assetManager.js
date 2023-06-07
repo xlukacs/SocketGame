@@ -16,7 +16,7 @@ const assets = [
   },
   {
     obj: "cube.obj",
-    texture: "grass.bmp",
+    texture: "spaceMap.bmp",
     name: "ground",
   },
 ];
@@ -44,7 +44,8 @@ export function initAssets(scene, camera, onProgress) {
 export function setInitPositions(scene) {
   return new Promise((resolve, reject) => {
     var object = scene.getObjectByName("ground", true);
-    object.scale.set(100, 1, 100);
+    object.position.set(0, -100, -100);
+    object.scale.set(1500, 1, 1000);
 
     object = scene.getObjectByName("originalRubberDucky", true);
     object.rotation.x -= Math.PI / 2;

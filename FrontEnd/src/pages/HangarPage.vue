@@ -221,28 +221,7 @@ export default defineComponent({
     return {
       isSelectedShipActive: false,
       tab: ref("ship"),
-      shipList: [
-        // {
-        //   label: "Ship1",
-        //   isAvailable: true,
-        // },
-        // {
-        //   label: "Ship2",
-        //   isAvailable: true,
-        // },
-        // {
-        //   label: "Ship3",
-        //   isAvailable: false,
-        // },
-        // {
-        //   label: "Ship4",
-        //   isAvailable: false,
-        // },
-        // {
-        //   label: "Ship5",
-        //   isAvailable: false,
-        // },
-      ],
+      shipList: [],
     };
   },
   methods: {
@@ -257,6 +236,7 @@ export default defineComponent({
     },
   },
   created() {
+    //fetch all the ships
     fetchGetRequest("http://localhost:3000/API/shop/getships").then(
       (response) => {
         for (let i = 0; i < response.ship.length; i++) {
@@ -270,6 +250,7 @@ export default defineComponent({
       }
     );
 
+    //fetch which ships does the user have
     fetchGetRequest("http://localhost:3000/API/users/getships", true).then(
       (response) => {
         if (!response.ships.length) return;

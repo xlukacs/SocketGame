@@ -42,7 +42,11 @@ import { DirectionalLight } from "three";
 
 import { defineComponent } from "vue";
 
-import { setupDrones, handleFormationCall } from "assets/scripts/drones";
+import {
+  setupDrones,
+  handleFormationCall,
+  changeDroneDesign,
+} from "assets/scripts/drones";
 import { activateSlot } from "assets/scripts/hotbar";
 
 import {
@@ -55,7 +59,13 @@ import {
   getCoordsToMoveTo,
   placeIndicator,
 } from "assets/scripts/managers/movementManager";
-import { mapGetters } from "vuex";
+
+import {
+  generateStarBackground,
+  updateStarBackground,
+} from "assets/scripts/managers/backgroundManager";
+
+import { mapActions, mapGetters } from "vuex";
 import { fetchGetRequest } from "src/assets/scripts/util";
 
 let scene, camera, renderer;
@@ -169,6 +179,7 @@ export default defineComponent({
     };
   },
   methods: {
+    ...mapActions("drones", ["removeDroneDesign", "addDroneDesign"]),
     activateHotbar(nthItem) {
       if (this.hotbar[nthItem].type == "formation") {
         activateSlot(this.hotbar, nthItem);
@@ -344,6 +355,8 @@ export default defineComponent({
       light.position.set(0, 10, 0);
       light.castShadow = true;
       scene.add(light);
+
+      generateStarBackground(scene);
     },
   },
   async created() {
@@ -370,6 +383,7 @@ export default defineComponent({
     const animate = () => {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
+      updateStarBackground(scene);
     };
     animate();
 
@@ -411,7 +425,6 @@ export default defineComponent({
       handleFormationCall(data.formation, scene, data.playerName);
     },
     object_moved: function (data) {
-      console.log("Object moved: ", data.objectName, data.from, data.to);
       var ownPlayer = this.playerData.playerName == data.objectName;
       var followWithCamera = ownPlayer;
 
@@ -422,6 +435,23 @@ export default defineComponent({
         ownPlayer,
         followWithCamera
       );
+    },
+    user_updated_droneDesign: function (data) {
+      changeDroneDesign(
+        scene,
+        "drone" + (parseInt(data.nthDrone) + 1) + data.playerName,
+        data.droneDesign,
+        "havoc.bmp"
+      );
+
+      if (data.playerName == this.playerData.playerName) {
+        this.addDroneDesign({
+          nthDrone: data.nthDrone,
+          designData: {
+            name: data.droneDesign,
+          },
+        });
+      }
     },
   },
 });

@@ -1,5 +1,5 @@
 export default {
-  getAllItnes: (state) => {
+  getAllItems: (state) => {
     return state.items;
   },
 };

@@ -29,7 +29,7 @@
                     :key="laser.id"
                   >
                     <div
-                      :id="laser.randomID"
+                      :id="laser.itemID"
                       class="item"
                       draggable="true"
                       @dragstart="drag"
@@ -57,7 +57,7 @@
                     :key="shield.id"
                   >
                     <div
-                      :id="shield.randomID"
+                      :id="shield.itemID"
                       class="item"
                       draggable="true"
                       @dragstart="drag"
@@ -106,7 +106,7 @@
                   >
                     <div
                       v-if="drone.items[0]"
-                      :id="drone.items[0].randomID"
+                      :id="drone.items[0].itemID"
                       class="item"
                       draggable="true"
                       @dragstart="drag"
@@ -120,7 +120,7 @@
                   >
                     <div
                       v-if="drone.items[1]"
-                      :id="drone.items[1].randomID"
+                      :id="drone.items[1].itemID"
                       class="item"
                       draggable="true"
                       @dragstart="drag"
@@ -137,7 +137,7 @@
                   >
                     <div
                       v-if="drone.design.name"
-                      :id="drone.design.randomID"
+                      :id="drone.design.itemID"
                       class="item"
                       draggable="true"
                       @dragstart="drag"
@@ -171,7 +171,7 @@
           :key="item.id"
         >
           <div
-            :id="item.randomID"
+            :id="item.itemID"
             class="item"
             draggable="true"
             @dragstart="drag"
@@ -209,6 +209,9 @@ export default defineComponent({
     ...mapGetters("drones", {
       dronesData: "getAllDrones",
     }),
+    ...mapGetters("inventory", {
+      inventoryData: "getAllItems",
+    }),
   },
   data() {
     return {
@@ -226,7 +229,7 @@ export default defineComponent({
             lasers: [
               {
                 itemName: "LF-4",
-                randomID: generateRandomID(16),
+                itemID: generateRandomID(16),
                 bg: "assets/pic/items/lasers/lf4.png",
                 type: "laser",
               },
@@ -234,13 +237,13 @@ export default defineComponent({
             shields: [
               {
                 itemName: "BO3",
-                randomID: generateRandomID(16),
+                itemID: generateRandomID(16),
                 bg: "assets/pic/items/shields/bo3.png",
                 type: "shield",
               },
               {
                 itemName: "BO3",
-                randomID: generateRandomID(16),
+                itemID: generateRandomID(16),
                 bg: "assets/pic/items/shields/bo3.png",
                 type: "shield",
               },
@@ -249,30 +252,12 @@ export default defineComponent({
           //drones: dronesData,
         },
       ],
-      inventory: [
-        {
-          itemName: "LF-4",
-          randomID: generateRandomID(16),
-          bg: "assets/pic/items/lasers/lf4.png",
-          type: "laser",
-        },
-        {
-          itemName: "LF-4",
-          randomID: generateRandomID(16),
-          bg: "assets/pic/items/lasers/lf4.png",
-          type: "laser",
-        },
-        {
-          itemName: "BO3",
-          randomID: generateRandomID(16),
-          bg: "assets/pic/items/shields/bo3.png",
-          type: "shield",
-        },
-      ],
+      inventory: [],
     };
   },
   methods: {
     ...mapActions("drones", ["removeDroneDesign", "addDroneDesign"]),
+    ...mapActions("inventory", ["removeItem", "addItem"]),
     allowDrop(ev) {
       ev.preventDefault();
     },
@@ -281,21 +266,19 @@ export default defineComponent({
     },
     drop(ev, slotType) {
       ev.preventDefault();
+      //find the ID (data) and the element (elem) we are moving
       var data = ev.dataTransfer.getData("text");
-
       var elem = document.getElementById(data);
+
+      //remove from its slot
+      this.removeItem(data);
+
       //inventory
       if (slotType == elem.getAttribute("type") || slotType == "general") {
         ev.target.appendChild(document.getElementById(data));
-        //remove drone design if it came from a drone
-        //TODO FIX
-        // if (slotType == general && elem.getAttribute("type") == "droneDesign") {
-        //   let fromDrone = document
-        //     .getElementById(data)
-        //     .parentElement.getAttribute("drone");
 
-        //   this.removeDroneDesign(fromDrone.substring(5));
-        // }
+        console.log("moved item in general slot");
+        return;
       }
 
       //drone
@@ -303,33 +286,55 @@ export default defineComponent({
         ("laser" == elem.getAttribute("type") ||
           "shield" == elem.getAttribute("type")) &&
         slotType == "droneGeneralSlot"
-      )
+      ) {
         ev.target.appendChild(document.getElementById(data));
+        return;
+      }
 
+      //place drone design in drone
       if (
         "droneDesign" == elem.getAttribute("type") &&
         slotType == "droneDesignSlot"
       ) {
-        let fromDrone = document
-          .getElementById(data)
-          .parentElement.getAttribute("drone");
-        let toDrone = ev.target.getAttribute("drone");
+        //if we are moving the drone design from a drone to a drone
+        if (document.getElementById(data).parentElement.hasAttribute("drone")) {
+          let fromDrone = document
+            .getElementById(data)
+            .parentElement.getAttribute("drone");
 
-        //move the drone in the UI
-        ev.target.appendChild(document.getElementById(data));
+          let nthDrone = fromDrone.substring(5);
+
+          this.removeDroneDesign(nthDrone);
+          console.log(
+            "removing drone design since we are moving it to another drone"
+          );
+        }
+
         //UPDATE drone design in the store
-        let nthDrone = fromDrone.substring(5);
-
-        let tempDroneData = this.$store.state.drones.drones[nthDrone].design;
-        this.removeDroneDesign(nthDrone);
+        let toDrone = ev.target.getAttribute("drone");
         this.addDroneDesign({
           nthDrone: toDrone.substring(5),
-          designData: tempDroneData,
+          designData: {
+            name: "havoc",
+            itemID: data,
+            bg: "assets/pic/items/drones/havoc.png",
+            type: "droneDesign",
+            skin: "havoc.bmp",
+          },
+        });
+
+        //this.$store.getters["user/getUser"]
+        this.$socket.emit("updateDroneDesign", {
+          user: "madrent",
+          nthDrone: toDrone.substring(5),
+          design: "havoc",
         });
       }
     },
   },
-  mounted() {},
+  mounted() {
+    this.inventory = this.inventoryData;
+  },
 });
 </script>
 
