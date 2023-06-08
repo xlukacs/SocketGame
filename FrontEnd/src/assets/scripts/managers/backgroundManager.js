@@ -53,8 +53,6 @@ export function generateStarBackground(scene) {
       stars.push(sphere);
       stars.push(sphere1);
     }
-
-  console.log(stars.length);
 }
 
 export function updateStarBackground() {

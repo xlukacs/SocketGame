@@ -65,6 +65,11 @@ import {
   updateStarBackground,
 } from "assets/scripts/managers/backgroundManager";
 
+import {
+  spawnEnemies,
+  updateEnemies,
+} from "assets/scripts/managers/enemyManager";
+
 import { mapActions, mapGetters } from "vuex";
 import { fetchGetRequest } from "src/assets/scripts/util";
 
@@ -384,6 +389,7 @@ export default defineComponent({
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
       updateStarBackground(scene);
+      updateEnemies(scene);
     };
     animate();
 
@@ -402,6 +408,8 @@ export default defineComponent({
         position: this.playerPos,
       });
     }, 500);
+
+    spawnEnemies(scene);
   },
   sockets: {
     user_joined: function (data) {
