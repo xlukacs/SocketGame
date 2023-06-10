@@ -3,21 +3,41 @@ const assets = [
     obj: "benceBouncer.obj",
     texture: "benceBouncer.bmp",
     name: "playerModel",
+    userdata: {
+      type: "player",
+    },
+  },
+  {
+    obj: "rubberDuck.obj",
+    texture: "rubberDuck.bmp",
+    name: "originalDrone",
+    userdata: {
+      type: "player_drone",
+    },
   },
   {
     obj: "rubberDuck.obj",
     texture: "rubberDuck.bmp",
     name: "originalRubberDucky",
+    userdata: {
+      type: "enemy",
+    },
   },
   {
     obj: "rubberDuck.obj",
     texture: "havoc.bmp",
     name: "havocDucky",
+    userdata: {
+      type: "player_drone",
+    },
   },
   {
     obj: "cube.obj",
     texture: "spaceMap.bmp",
     name: "ground",
+    userdata: {
+      type: "map_part_ground",
+    },
   },
 ];
 
@@ -27,7 +47,14 @@ export function initAssets(scene, camera, onProgress) {
   return new Promise((resolve, reject) => {
     let loadedCount = 0;
     assets.forEach(async (asset) => {
-      await loadObject(scene, camera, asset.obj, asset.texture, asset.name);
+      await loadObject(
+        scene,
+        camera,
+        asset.obj,
+        asset.texture,
+        asset.name,
+        asset.userdata
+      );
       //console.log("DONE WITH " + asset.name);
 
       loadedCount++;
@@ -46,6 +73,9 @@ export function setInitPositions(scene) {
     var object = scene.getObjectByName("ground", true);
     object.position.set(0, -100, -100);
     object.scale.set(1500, 1, 1000);
+
+    object = scene.getObjectByName("originalDrone", true);
+    object.rotation.x -= Math.PI / 2;
 
     object = scene.getObjectByName("originalRubberDucky", true);
     object.rotation.x -= Math.PI / 2;

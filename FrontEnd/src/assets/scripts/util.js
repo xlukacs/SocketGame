@@ -6,7 +6,14 @@ import { Mesh } from "three";
 
 import { getKey } from "../util/session";
 
-export async function loadObject(scene, camera, objName, textureName, id) {
+export async function loadObject(
+  scene,
+  camera,
+  objName,
+  textureName,
+  id,
+  userdata
+) {
   const loader = new OBJLoader();
 
   return new Promise((resolve, reject) => {
@@ -22,9 +29,11 @@ export async function loadObject(scene, camera, objName, textureName, id) {
           if (child instanceof Mesh) child.material = material;
         });
         object.name = id;
+        object.userData = userdata;
         object.scale.set(0, 0, 0);
         object.position.set(0, 0, 0);
-        //console.log(object.name + " added to the scene.");
+        // console.log(object.name + " added to the scene.");
+        // console.log(object.uuid);
 
         // Add the mesh to your scene
         scene.add(object);

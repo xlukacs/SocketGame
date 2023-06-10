@@ -36,6 +36,8 @@ export class baseEnemy {
     var object = this.scene.getObjectByName("originalRubberDucky", true);
     this.object = object.clone();
     this.object.name = this.name;
+    this.object.userData = { type: "enemy" };
+    // console.log(this.object.userData);
 
     //add the cloned object to the scene
     this.scene.add(this.object);
@@ -47,7 +49,11 @@ export class baseEnemy {
     //add the indicator around the object
     const geometry = new THREE.CircleGeometry(10, 32, 0, 1.5);
 
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x00ff00,
+      transparent: true,
+      opacity: 0.5,
+    });
 
     this.indicator.tl = new THREE.Mesh(geometry, material);
     this.indicator.tr = new THREE.Mesh(geometry, material);
@@ -105,6 +111,8 @@ export class baseEnemy {
         vm.scene.add(vm.textObject);
       }
     );
+
+    this.clearHighlight();
   }
 
   update() {
@@ -164,5 +172,33 @@ export class baseEnemy {
     this.steps = Math.floor(Math.random() * 200 + 1);
     this.velocity.x = Math.floor(Math.random() * 100 - 50);
     this.velocity.z = Math.floor(Math.random() * 100 - 50);
+  }
+
+  highlight() {
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xff0000,
+      transparent: true,
+      opacity: 1,
+    });
+
+    this.indicator.tl.material = material;
+    this.indicator.tr.material = material;
+    this.indicator.bl.material = material;
+    this.indicator.br.material = material;
+    // this.object.material.color.setHex(0xff0000);
+  }
+
+  clearHighlight() {
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: 0,
+    });
+
+    this.indicator.tl.material = material;
+    this.indicator.tr.material = material;
+    this.indicator.bl.material = material;
+    this.indicator.br.material = material;
+    // this.object.material.color.setHex(0x000000);
   }
 }

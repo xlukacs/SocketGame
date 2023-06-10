@@ -68,6 +68,7 @@ import {
 import {
   spawnEnemies,
   updateEnemies,
+  highlightEnemy,
 } from "assets/scripts/managers/enemyManager";
 
 import { mapActions, mapGetters } from "vuex";
@@ -271,11 +272,30 @@ export default defineComponent({
       //calculate the position the player wants to move
       var { moveToPosX, moveToPosZ } = getCoordsToMoveTo(ev, this.playerPos);
 
-      this.$socket.emit("object_moved", {
-        objectName: this.playerData.playerName,
-        to: { x: moveToPosX, y: 0, z: moveToPosZ },
-        from: { x: this.playerPos.x, y: 0, z: this.playerPos.z },
-      });
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      mouse.x = (ev.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(ev.clientY / window.innerHeight) * 2 + 1;
+      // console.log("Mouse:", mouse);
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true);
+
+      if (intersects.length > 0) {
+        const clickedObject = intersects[0].object.parent;
+
+        if (clickedObject)
+          if (clickedObject.userData.type == "enemy") {
+            // console.log("Clicked on enemy", clickedObject);
+            highlightEnemy(scene, clickedObject.name);
+          } else {
+            this.$socket.emit("object_moved", {
+              objectName: this.playerData.playerName,
+              to: { x: moveToPosX, y: 0, z: moveToPosZ },
+              from: { x: this.playerPos.x, y: 0, z: this.playerPos.z },
+            });
+          }
+      }
     },
     moveObject(
       from,
@@ -351,7 +371,10 @@ export default defineComponent({
       );
 
       //render pipeline
-      renderer = new THREE.WebGLRenderer();
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        premultipliedAlpha: false,
+      });
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.getElementById("gameArea").appendChild(renderer.domElement);
 

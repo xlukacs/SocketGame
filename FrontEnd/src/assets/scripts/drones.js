@@ -4,7 +4,7 @@ import { Mesh } from "three";
 
 export function setupDrones(scene, playerName, drones) {
   //spawn drones
-  var object = scene.getObjectByName("originalRubberDucky", true);
+  var object = scene.getObjectByName("originalDrone", true);
   let drone1 = object.clone();
   drone1.name = "drone1" + playerName;
   drone1.scale.set(0.1, 0.1, 0.1);
