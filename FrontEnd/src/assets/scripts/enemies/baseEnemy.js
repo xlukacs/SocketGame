@@ -15,6 +15,8 @@ export class baseEnemy {
       br: null,
     };
     this.steps = 0;
+    this.hasTarget = false;
+    this.target = "";
 
     this.position = {
       x: 0,
@@ -165,10 +167,16 @@ export class baseEnemy {
       this.steps--;
     }
 
-    if (this.steps == 0) this.move();
+    if (this.steps == 0 && !this.hasTarget) {
+      this.randomMove();
+    }
+
+    if (this.steps == 0 && this.hasTarget) {
+      this.setAttacker(this.target);
+    }
   }
 
-  move() {
+  randomMove() {
     this.steps = Math.floor(Math.random() * 200 + 1);
     this.velocity.x = Math.floor(Math.random() * 100 - 50);
     this.velocity.z = Math.floor(Math.random() * 100 - 50);
@@ -200,5 +208,32 @@ export class baseEnemy {
     this.indicator.bl.material = material;
     this.indicator.br.material = material;
     // this.object.material.color.setHex(0x000000);
+
+    this.hasTarget = false;
+    this.steps = 0;
+  }
+
+  setAttacker(playerName) {
+    this.hasTarget = true;
+    this.target = playerName;
+
+    var target = this.scene.getObjectByName(playerName);
+    const targetPosition = new THREE.Vector3(
+      target.position.x,
+      0,
+      target.position.z
+    );
+    const objectPosition = new THREE.Vector3(
+      this.position.x,
+      0,
+      this.position.z
+    );
+
+    this.steps = Math.floor(targetPosition.distanceTo(objectPosition));
+
+    // console.log(targetPosition.distanceTo(objectPosition));
+
+    this.velocity.x = target.position.x - this.position.x;
+    this.velocity.z = target.position.z - this.position.z;
   }
 }

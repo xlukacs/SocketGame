@@ -69,6 +69,7 @@ import {
   spawnEnemies,
   updateEnemies,
   highlightEnemy,
+  attackEnemy,
 } from "assets/scripts/managers/enemyManager";
 
 import { mapActions, mapGetters } from "vuex";
@@ -287,7 +288,7 @@ export default defineComponent({
         if (clickedObject)
           if (clickedObject.userData.type == "enemy") {
             // console.log("Clicked on enemy", clickedObject);
-            highlightEnemy(scene, clickedObject.name);
+            highlightEnemy(clickedObject.name);
           } else {
             this.$socket.emit("object_moved", {
               objectName: this.playerData.playerName,
@@ -329,6 +330,7 @@ export default defineComponent({
       }
       if (key.code == "Digit3") {
         this.activateHotbar(2);
+        attackEnemy(this.playerData.playerName);
       }
       if (key.code == "Digit4") {
         this.activateHotbar(3);
