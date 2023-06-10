@@ -4,7 +4,7 @@ var highlightedEnemy = "";
 import { baseEnemy } from "../enemies/baseEnemy.js";
 
 export async function spawnEnemies(scene) {
-  for (let i = 0; i < 0; i++) {
+  for (let i = 0; i < 2; i++) {
     enemies.push(new baseEnemy(scene, "enemy" + i));
   }
 }

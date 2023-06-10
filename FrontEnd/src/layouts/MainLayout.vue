@@ -52,7 +52,8 @@
           <q-btn
             color="positive"
             label="START"
-            @click="$router.push('/gameClient')"
+            :to="'/gameClient?id=' + this.accountid"
+            target="_blank"
           />
         </div>
         <div class="rightPart">
@@ -98,6 +99,7 @@ export default defineComponent({
   },
   data() {
     return {
+      accountid: 2,
       accountInfo: {
         xp: 800000,
         honors: 1800000000,

@@ -336,6 +336,10 @@ export default defineComponent({
         }
 
         var objectPosition = scene.getObjectByName(objectName, true).position;
+        var indicatorPosition = scene.getObjectByName(
+          "indicator_" + objectName,
+          true
+        ).position;
         const animFrame = window.setInterval(() => {
           objectPosition.x += xStepAmount;
           objectPosition.z += zStepAmount;
@@ -346,7 +350,16 @@ export default defineComponent({
           }
 
           var object = scene.getObjectByName(objectName, true);
+          var indicator = scene.getObjectByName(
+            "indicator_" + objectName,
+            true
+          );
           object.position.set(objectPosition.x, 0, objectPosition.z);
+          indicator.position.set(
+            objectPosition.x,
+            indicatorPosition.y,
+            objectPosition.z
+          );
 
           camera.position.set(
             objectPosition.x,
@@ -486,6 +499,7 @@ export default defineComponent({
         alpha: true,
         premultipliedAlpha: false,
       });
+      renderer.setClearColor(0x000000);
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.getElementById("gameArea").appendChild(renderer.domElement);
 
@@ -502,7 +516,8 @@ export default defineComponent({
         alpha: true,
         premultipliedAlpha: false,
       });
-      minimapRenderer.setSize(200, 175); // Adjust the size as needed
+      minimapRenderer.setClearColor(0x000000);
+      minimapRenderer.setSize(200, 150); // Adjust the size as needed
 
       // Create a camera for the minimap
       minimapCamera = new THREE.PerspectiveCamera(
@@ -713,10 +728,11 @@ export default defineComponent({
   }
 
   .minimapWrapper {
-    width: 200px;
-    height: 150px;
+    width: 210px;
+    height: 160px;
     bottom: 10px;
     right: 10px;
+    box-sizing: content-box;
 
     #minimap {
       border: 5px solid #1976d2;

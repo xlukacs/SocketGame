@@ -17,6 +17,9 @@ router.get('/getData', authenticateToken, async (req, res) => {
 router.get('/getusername', async (req, res) => {
     console.log("Got a request in /API/users/getusername", req.query.user_id);
 
+    if(req.query.user_id == undefined) 
+        res.status(400).json({ error: 'No user_id provided' });
+        
     var query = 'SELECT username FROM users WHERE id=$1';
     const usernameResult = await pool.query(query, [req.query.user_id]);
     

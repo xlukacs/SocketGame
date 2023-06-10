@@ -39,6 +39,22 @@ const assets = [
       type: "map_part_ground",
     },
   },
+  {
+    obj: "cube.obj",
+    texture: "white.bmp",
+    name: "indicator",
+    userdata: {
+      type: "map_part_indicator_own",
+    },
+  },
+  {
+    obj: "cube.obj",
+    texture: "red.bmp",
+    name: "indicatorEnemy",
+    userdata: {
+      type: "map_part_indicator_enemy",
+    },
+  },
 ];
 
 import { loadObject } from "assets/scripts/util";
@@ -71,7 +87,7 @@ export function initAssets(scene, camera, onProgress) {
 export function setInitPositions(scene) {
   return new Promise((resolve, reject) => {
     var object = scene.getObjectByName("ground", true);
-    object.position.set(0, -100, -100);
+    object.position.set(0, -100, 0);
     object.scale.set(1500, 1, 1000);
 
     object = scene.getObjectByName("originalDrone", true);
@@ -102,6 +118,18 @@ export function spawnObject(
 
     clone.position.set(position.x, position.y, position.z);
     clone.scale.set(scale.x, scale.y, scale.z);
+
+    //if we spawn a player, we need to spawn an indicator as well
+    if (objectName === "playerModel") {
+      var indicator = scene.getObjectByName("indicator", true);
+      let cloneIndicator = indicator.clone();
+      cloneIndicator.name = "indicator_" + spawnedObjectName;
+
+      scene.add(cloneIndicator);
+
+      cloneIndicator.position.set(position.x, 100, position.z);
+      cloneIndicator.scale.set(20, 20, 20);
+    }
 
     resolve();
   });

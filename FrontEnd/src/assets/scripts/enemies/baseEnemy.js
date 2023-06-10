@@ -7,6 +7,7 @@ export class baseEnemy {
     this.name = name;
     this.object = null;
     this.textObject = null;
+    this.cloneIndicator = null;
     this.indicator = {
       tl: null,
       tr: null,
@@ -33,6 +34,16 @@ export class baseEnemy {
   }
 
   init() {
+    //add enemy indicator
+    var indicator = this.scene.getObjectByName("indicatorEnemy", true);
+    this.cloneIndicator = indicator.clone();
+    this.cloneIndicator.name = "indicator_" + this.name;
+
+    this.scene.add(this.cloneIndicator);
+
+    this.cloneIndicator.position.set(this.position.x, 100, this.position.z);
+    this.cloneIndicator.scale.set(20, 20, 20);
+
     //clone the original rubber ducky
     var object = this.scene.getObjectByName("originalRubberDucky", true);
     this.object = object.clone();
@@ -124,6 +135,8 @@ export class baseEnemy {
     if (this.steps > 0) {
       this.position.x += this.velocity.x / 200;
       this.position.z += this.velocity.z / 200;
+
+      this.cloneIndicator.position.set(this.position.x, 100, this.position.z);
 
       this.object.position.set(
         this.position.x,
