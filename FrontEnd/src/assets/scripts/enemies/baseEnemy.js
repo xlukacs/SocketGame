@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 
 export class baseEnemy {
@@ -39,7 +38,6 @@ export class baseEnemy {
     this.object = object.clone();
     this.object.name = this.name;
     this.object.userData = { type: "enemy" };
-    // console.log(this.object.userData);
 
     //add the cloned object to the scene
     this.scene.add(this.object);

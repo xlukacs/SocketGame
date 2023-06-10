@@ -1,6 +1,7 @@
 UI:
 
 - Create notice/update/event widget in the main screen
+- Load game UI positions and configurations from server at the end of mounted()
 
 FIX UI:
 

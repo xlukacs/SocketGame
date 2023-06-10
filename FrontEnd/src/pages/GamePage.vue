@@ -33,6 +33,112 @@
       </q-img>
     </q-btn>
   </div>
+  <div class="overlay" v-if="!loading">
+    <div class="icons">
+      <div class="icon">
+        <q-btn
+          color="primary"
+          icon="public"
+          dense
+          @click="overlay.minimap = !overlay.minimap"
+        />
+      </div>
+      <div class="icon">
+        <q-btn
+          color="primary"
+          icon="rocket"
+          dense
+          @click="overlay.shipStats = !overlay.shipStats"
+        />
+      </div>
+      <div class="icon">
+        <q-btn
+          color="primary"
+          icon="person"
+          dense
+          @click="overlay.profileStats = !overlay.profileStats"
+        />
+      </div>
+    </div>
+    <!-- WIDGETS/WRAPPERS -->
+    <div class="wrapper minimapWrapper" v-show="overlay.minimap">
+      <q-btn
+        color="primary"
+        icon="close"
+        dense
+        @click="overlay.minimap = !overlay.minimap"
+        class="closeBtn"
+      />
+      <div id="minimap"></div>
+    </div>
+
+    <div class="wrapper shipStatsWrapper" v-show="overlay.shipStats">
+      <q-btn
+        color="primary"
+        icon="close"
+        dense
+        @click="overlay.shipStats = !overlay.shipStats"
+        class="closeBtn"
+      />
+      <div class="content">
+        <p>
+          XP:
+          <span class="text-weight-bold">0</span>
+        </p>
+        <p>
+          Honors:
+          <span class="text-weight-bold">0</span>
+        </p>
+        <p>
+          Credits:
+          <span class="text-weight-bold">0</span>
+        </p>
+        <p>
+          Uridium:
+          <span class="text-weight-bold">0</span>
+        </p>
+        <p>
+          Trubium:
+          <span class="text-weight-bold">0</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="wrapper personalStatsWrapper" v-show="overlay.profileStats">
+      <q-btn
+        color="primary"
+        icon="close"
+        dense
+        @click="overlay.profileStats = !overlay.profileStats"
+        class="closeBtn"
+      />
+      <div class="content">
+        <p>
+          HP:
+          <span class="text-weight-bold">0</span>
+        </p>
+        <p>
+          Shield:
+          <span class="text-weight-bold">0</span>
+        </p>
+        <p>
+          Cargo:
+          <span class="text-weight-bold">0</span>
+        </p>
+        <p>
+          Config:
+          <button
+            @click="
+              playerData.activeConfig = playerData.activeConfig == 1 ? 2 : 1
+            "
+          >
+            {{ playerData.activeConfig }}
+          </button>
+          <!-- <button>2</button> -->
+        </p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -75,7 +181,7 @@ import {
 import { mapActions, mapGetters } from "vuex";
 import { fetchGetRequest } from "src/assets/scripts/util";
 
-let scene, camera, renderer;
+let scene, camera, renderer, minimapRenderer, minimapCamera;
 
 export default defineComponent({
   name: "GamePage",
@@ -92,6 +198,11 @@ export default defineComponent({
   },
   data() {
     return {
+      overlay: {
+        minimap: true,
+        profileStats: true,
+        shipStats: true,
+      },
       loadingProgress: 0.0,
       loading: true,
       errorMessage: "",
@@ -103,6 +214,7 @@ export default defineComponent({
       playerData: {
         playerID: 0,
         playerName: "",
+        activeConfig: 1,
       },
       playerPos: {
         x: 0,
@@ -270,14 +382,12 @@ export default defineComponent({
       }
     },
     movePlayer(ev) {
-      //calculate the position the player wants to move
       var { moveToPosX, moveToPosZ } = getCoordsToMoveTo(ev, this.playerPos);
 
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
       mouse.x = (ev.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(ev.clientY / window.innerHeight) * 2 + 1;
-      // console.log("Mouse:", mouse);
 
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(scene.children, true);
@@ -287,7 +397,6 @@ export default defineComponent({
 
         if (clickedObject)
           if (clickedObject.userData.type == "enemy") {
-            // console.log("Clicked on enemy", clickedObject);
             highlightEnemy(clickedObject.name);
           } else {
             this.$socket.emit("object_moved", {
@@ -388,6 +497,27 @@ export default defineComponent({
 
       generateStarBackground(scene);
     },
+    setupMinimap() {
+      minimapRenderer = new THREE.WebGLRenderer({
+        alpha: true,
+        premultipliedAlpha: false,
+      });
+      minimapRenderer.setSize(200, 175); // Adjust the size as needed
+
+      // Create a camera for the minimap
+      minimapCamera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      minimapCamera.position.set(0, 650, 0);
+      minimapCamera.lookAt(0, 0, 0);
+
+      document
+        .getElementById("minimap")
+        .appendChild(minimapRenderer.domElement);
+    },
   },
   async created() {
     this.playerData.playerID = this.$route.query.id;
@@ -401,18 +531,22 @@ export default defineComponent({
   },
   async mounted() {
     this.init();
-    console.log("Scene created.");
+    // console.log("Scene created.");
 
     await initAssets(scene, camera, (progress) => {
       this.loadingProgress = progress;
     });
+    this.loading = false;
+    // console.log("Done loading the assets.");
 
     await setInitPositions(scene);
+    this.setupMinimap();
 
     // render loop
     const animate = () => {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
+      minimapRenderer.render(scene, minimapCamera);
       updateStarBackground(scene);
       updateEnemies(scene);
     };
@@ -423,9 +557,6 @@ export default defineComponent({
 
     //delay loading screen a bit
     window.setTimeout(() => {
-      this.loading = false;
-      console.log("Done loading the assets.");
-
       this.$socket.emit("join_game_map", {
         server: "GE1",
         map: "1-1",
@@ -434,7 +565,9 @@ export default defineComponent({
       });
     }, 500);
 
-    spawnEnemies(scene);
+    //setup UI for user bsed on saved configurations
+    spawnEnemies(scene); //TODO: move this to the server side
+    //this.setupMinimap(); //load UI parts from server side config
   },
   sockets: {
     user_joined: function (data) {
@@ -521,5 +654,87 @@ export default defineComponent({
 
 .hotbarItemCount {
   padding: 0px;
+}
+
+.overlay {
+  // position: fixed;
+  // top: 0px;
+  // left: 0px;
+  // width: 100vw;
+  // height: 100vh;
+  // z-index: -1001;
+  .wrapper {
+    position: fixed;
+    width: 200px;
+    height: 150px;
+    .closeBtn {
+      position: absolute;
+      top: -28px;
+    }
+    .content {
+      background: rgb(26, 29, 35);
+      color: white;
+      padding: 10px;
+      border: 5px solid #1976d2;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      p {
+        display: flex;
+        flex-direction: row;
+        margin: 0px;
+        height: 30px;
+        line-height: 30px;
+        span,
+        button {
+          margin-left: 15px;
+        }
+        button {
+          display: inline-block;
+          background-color: transparent;
+          border: unset;
+          cursor: pointer;
+          color: white;
+        }
+      }
+    }
+  }
+  .icons {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    .icon {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .minimapWrapper {
+    width: 200px;
+    height: 150px;
+    bottom: 10px;
+    right: 10px;
+
+    #minimap {
+      border: 5px solid #1976d2;
+      border-radius: 5px;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+  }
+
+  .shipStatsWrapper {
+    top: 30px;
+    right: 10px;
+  }
+
+  .personalStatsWrapper {
+    top: 280px;
+    right: 10px;
+  }
 }
 </style>
