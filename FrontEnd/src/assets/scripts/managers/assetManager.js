@@ -59,7 +59,7 @@ const assets = [
 
 import { loadObject } from "assets/scripts/util";
 
-export function initAssets(scene, camera, onProgress) {
+export function loadAssets(scene, camera, onProgress) {
   return new Promise((resolve, reject) => {
     let loadedCount = 0;
     assets.forEach(async (asset) => {

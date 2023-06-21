@@ -33,7 +33,7 @@
       </q-img>
     </q-btn>
   </div>
-  <div class="overlay" v-if="!loading">
+  <div class="overlay" v-show="!loading">
     <div class="icons">
       <div class="icon">
         <q-btn
@@ -69,7 +69,7 @@
         @click="overlay.minimap = !overlay.minimap"
         class="closeBtn"
       />
-      <div id="minimap"></div>
+      <div id="minimap" @click="moveFromMap"></div>
     </div>
 
     <div class="wrapper shipStatsWrapper" v-show="overlay.shipStats">
@@ -156,7 +156,7 @@ import {
 import { activateSlot } from "assets/scripts/hotbar";
 
 import {
-  initAssets,
+  // initAssets,
   setInitPositions,
   spawnObject,
 } from "assets/scripts/managers/assetManager";
@@ -178,6 +178,9 @@ import {
   attackEnemy,
 } from "assets/scripts/managers/enemyManager";
 
+import { setupScene, setupMinimap } from "assets/scripts/render/setup";
+import { initAssets } from "assets/scripts/render/init";
+
 import { mapActions, mapGetters } from "vuex";
 import { fetchGetRequest } from "src/assets/scripts/util";
 
@@ -195,6 +198,9 @@ export default defineComponent({
     ...mapGetters("drones", {
       drones: "getAllDrones",
     }),
+    ...mapGetters("webstate", {
+      loadingProgress: "getLoadingState",
+    }),
   },
   data() {
     return {
@@ -203,7 +209,6 @@ export default defineComponent({
         profileStats: true,
         shipStats: true,
       },
-      loadingProgress: 0.0,
       loading: true,
       errorMessage: "",
       camera: {
@@ -474,65 +479,29 @@ export default defineComponent({
       }
     },
     init() {
+      //attach keypress event listener
       window.addEventListener("keypress", (e) => {
         this.handleKey(e);
       });
 
-      //scene
-      scene = new THREE.Scene();
+      //setup main camera
+      const { sc, ca, re } = setupScene();
+      scene = sc;
+      camera = ca;
+      renderer = re;
 
-      //camera
-      camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      );
-      camera.position.set(
-        this.camera.offsetX,
-        this.camera.offsetY,
-        this.camera.offsetZ
-      );
-
-      //render pipeline
-      renderer = new THREE.WebGLRenderer({
-        alpha: true,
-        premultipliedAlpha: false,
-      });
-      renderer.setClearColor(0x000000);
-      renderer.setSize(window.innerWidth, window.innerHeight);
       document.getElementById("gameArea").appendChild(renderer.domElement);
-
-      //basic light
-      const light = new DirectionalLight(0xffffff, 1);
-      light.position.set(0, 10, 0);
-      light.castShadow = true;
-      scene.add(light);
-
-      generateStarBackground(scene);
     },
     setupMinimap() {
-      minimapRenderer = new THREE.WebGLRenderer({
-        alpha: true,
-        premultipliedAlpha: false,
-      });
-      minimapRenderer.setClearColor(0x000000);
-      minimapRenderer.setSize(200, 150); // Adjust the size as needed
-
-      // Create a camera for the minimap
-      minimapCamera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      );
-      minimapCamera.position.set(0, 650, 0);
-      minimapCamera.lookAt(0, 0, 0);
+      const { mr, mc } = setupMinimap();
+      minimapRenderer = mr;
+      minimapCamera = mc;
 
       document
         .getElementById("minimap")
         .appendChild(minimapRenderer.domElement);
     },
+    moveFromMap() {},
   },
   async created() {
     this.playerData.playerID = this.$route.query.id;
@@ -546,15 +515,10 @@ export default defineComponent({
   },
   async mounted() {
     this.init();
-    // console.log("Scene created.");
 
-    await initAssets(scene, camera, (progress) => {
-      this.loadingProgress = progress;
-    });
+    await initAssets(scene, camera);
     this.loading = false;
-    // console.log("Done loading the assets.");
 
-    await setInitPositions(scene);
     this.setupMinimap();
 
     // render loop
