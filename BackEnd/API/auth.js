@@ -6,10 +6,10 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
     console.log("Got a request in /API/auth/register", req.body.username, req.body.password, req.body.email);
     var query = "INSERT INTO public.users( " +
-                "username, password, email) " +
-                "VALUES ($1, $2, $3);"
+                "username, password, email, faction) " +
+                "VALUES ($1, $2, $3, $4);"
 
-    const registerResult = await pool.query(query, [req.body.username, req.body.password, req.body.email])
+    const registerResult = await pool.query(query, [req.body.username, req.body.password, req.body.email, "VRU"])
 
     res.status(200).json({ registerResult: registerResult })
 })
